@@ -5,8 +5,32 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:FirstPhoneBook"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="MainWindow" Height="600" Width="800">
     <Grid>
-        
+        <Label x:Name="MainLogo" Content="Phone Book" HorizontalAlignment="Left" Margin="319,20,0,0" VerticalAlignment="Top" Height="35" Width="133" FontSize="20" RenderTransformOrigin="0.744,0"/>
+        <Label x:Name="NameLabel" Content="Name:" HorizontalAlignment="Left" Margin="44,65,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.474,-0.692"/>
+        <Label x:Name="PhoneNoLabel" Content="Phone No:" HorizontalAlignment="Left" Margin="44,96,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.474,-0.692"/>
+        <Label x:Name="EmailLabel" Content="Email:" HorizontalAlignment="Left" Margin="44,127,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.474,-0.692"/>
+        <Label x:Name="Address_Label" Content="Address:" HorizontalAlignment="Left" Margin="44,158,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.474,-0.692"/>
+        <TextBox x:Name="Name_TextBox" HorizontalAlignment="Left" Height="26" Margin="121,65,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="360"/>
+        <TextBox x:Name="PhoneNo_TextBox" HorizontalAlignment="Left" Height="26" Margin="121,96,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="360"/>
+        <TextBox x:Name="EMail_TextBox" HorizontalAlignment="Left" Height="26" Margin="121,127,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="360"/>
+        <TextBox x:Name="Address_TextBox" HorizontalAlignment="Left" Height="58" Margin="121,158,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="360"/>
+        <Button x:Name="New_Button" Content="New" HorizontalAlignment="Left" Margin="531,65,0,0" VerticalAlignment="Top" Width="101" Click="New_Button_Click"/>
+        <Button x:Name="Edit_Button" Content="Edit" HorizontalAlignment="Left" Margin="531,96,0,0" VerticalAlignment="Top" Width="101"/>
+        <Button x:Name="Cancel_Button" Content="Cancel" HorizontalAlignment="Left" Margin="531,127,0,0" VerticalAlignment="Top" Width="101"/>
+        <Button x:Name="Save_Button" Content="Save" HorizontalAlignment="Left" Margin="531,158,0,0" VerticalAlignment="Top" Width="101" Click="Save_Button_Click"/>
+        <Label x:Name="Search_Label" Content="Search:" HorizontalAlignment="Left" Margin="44,242,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.474,-0.692"/>
+        <TextBox x:Name="Search_TextBox" HorizontalAlignment="Left" Height="26" Margin="121,242,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="360"/>
+        <DataGrid x:Name="Contacts_DataGrid" HorizontalAlignment="Left" Height="215" Margin="44,316,0,0" VerticalAlignment="Top" Width="696" AutoGenerateColumns="False" SelectionChanged="Contacts_DataGrid_SelectionChanged">
+            <DataGrid.Columns>
+                <DataGridTextColumn Binding="{Binding Name}" Width="100" Header="NAME"/>
+                <DataGridTextColumn Binding="{Binding Phone}" Width="100" Header="PHONE"/>
+                <DataGridTextColumn Binding="{Binding Email}" Width="100" Header="EMAIL"/>
+                <DataGridTextColumn Binding="{Binding Address}" Width="300" Header="ADDRESS"/>
+            </DataGrid.Columns>
+        </DataGrid>
+
+
     </Grid>
 </Window>

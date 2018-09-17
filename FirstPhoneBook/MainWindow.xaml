@@ -30,6 +30,7 @@
                 <DataGridTextColumn Binding="{Binding Address}" Width="300" Header="ADDRESS"/>
             </DataGrid.Columns>
         </DataGrid>
+        <Button x:Name="SearchButton" Content="Search" HorizontalAlignment="Left" Margin="531,245,0,0" VerticalAlignment="Top" Width="101" Click="SearchButton_Click"/>
 
 
     </Grid>

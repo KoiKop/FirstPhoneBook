@@ -23,15 +23,13 @@ namespace FirstPhoneBook
     /// </summary>
     public partial class MainWindow : Window
     {
-        //SqlConnection con;
-        //SqlCommand cmd;
-        //DataTable dtForContry; //Hmmm...
-        DataTable dtForGridView;
-        //SqlDataAdapter adpt;
+        
+        private readonly DataTable dataTable;
 
         public MainWindow()
         {
             InitializeComponent();
+            dataTable = new DataTable("PhoneBook");
             Edit_Button.IsEnabled = false;
             FillDataGrid();
         }
@@ -63,6 +61,7 @@ namespace FirstPhoneBook
             }
 
             FillDataGrid();
+            EraseDataFromTexboxes();
         }
 
         private void FillDataGrid()
@@ -71,39 +70,63 @@ namespace FirstPhoneBook
             {
                 SqlCommand sqlCommand = new SqlCommand("SELECT Name, Phone, Email, Address FROM PhoneBookContent", con);
                 SqlDataAdapter sqlDataAdapter = new SqlDataAdapter(sqlCommand);
-                DataTable dt = new DataTable("PhoneBook");
-                sqlDataAdapter.Fill(dt);
-                Contacts_DataGrid.ItemsSource = dt.DefaultView;
+                sqlDataAdapter.Fill(dataTable);
+                Contacts_DataGrid.ItemsSource = dataTable.DefaultView;
             }
         }
 
-
         private void New_Button_Click(object sender, RoutedEventArgs e)
         {
-            //dopisać czyszczenie pól
+            EraseDataFromTexboxes();
 
             Edit_Button.IsEnabled = false;
             Save_Button.IsEnabled = true;
         }
 
-       
-
         private void Contacts_DataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+
             if (Contacts_DataGrid.SelectedIndex != -1)
             {
                 int temp = Contacts_DataGrid.SelectedIndex;
-                if (Contacts_DataGrid.SelectedIndex < dtForGridView.Rows.Count)
+                if (Contacts_DataGrid.SelectedIndex < dataTable.Rows.Count)
                 {
-                    Name_TextBox.Text = dtForGridView.Rows[temp][1].ToString();
-                    PhoneNo_TextBox.Text = dtForGridView.Rows[temp][2].ToString();
-                    EMail_TextBox.Text = dtForGridView.Rows[temp][3].ToString();
-                    Address_TextBox.Text = dtForGridView.Rows[temp][4].ToString();
+                    Name_TextBox.Text = dataTable.Rows[temp][0].ToString();
+                    PhoneNo_TextBox.Text = dataTable.Rows[temp][1].ToString();
+                    EMail_TextBox.Text = dataTable.Rows[temp][2].ToString();
+                    Address_TextBox.Text = dataTable.Rows[temp][3].ToString();
                     Edit_Button.IsEnabled = true;
                     Save_Button.IsEnabled = false;
                     Contacts_DataGrid.SelectedIndex = -1;
                 }
             }
+        }
+
+        private void EraseDataFromTexboxes()
+        {
+            Name_TextBox.Text = EMail_TextBox.Text = EMail_TextBox.Text = Address_TextBox.Text = string.Empty;
+        }
+
+        private void SearchButton_Click(object sender, RoutedEventArgs e)
+        {
+            using (SqlConnection con = new SqlConnection(connectionString))
+            {
+                SqlCommand sqlCommand = new SqlCommand(@"SELECT * FROM PhoneBookContent WHERE Name LIKE @Search OR Phone LIKE @Search OR Email LIKE @Search or Address LIKE @Search", con);
+                //SqlCommand sqlCommand = new SqlCommand("SELECT * FROM PhoneBookContent WHERE Contains(Name, 'dup')", con);
+                
+                sqlCommand.Parameters.AddWithValue("@Search", AddPercentageSignsToParam(Search_TextBox.Text));
+
+                SqlDataAdapter sqlDataAdapter = new SqlDataAdapter(sqlCommand);
+                dataTable.Clear();
+                sqlDataAdapter.Fill(dataTable);
+                Contacts_DataGrid.ItemsSource = dataTable.DefaultView; 
+            }
+        }
+
+        private string AddPercentageSignsToParam(string param)
+        {
+            return string.Concat("%", param, "%");
+
         }
     }
 }

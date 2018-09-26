@@ -37,8 +37,9 @@ namespace FirstPhoneBook
 
         string connectionString = @"Data Source=.\sqlexpress;Initial Catalog=PhoneBookContent;Integrated Security=True";
         //string connectionString = ConfigurationManager.ConnectionStrings["ConString"].ConnectionString;
-        bool componentIsEdited = false;
 
+        bool componentIsEdited = false;
+        string selectedUserId;
 
         private void Save_Button_Click(object sender, RoutedEventArgs e)
         {
@@ -70,7 +71,7 @@ namespace FirstPhoneBook
                 }
             }
 
-            FillDataGrid();
+            UpdateDataGrid();
             EraseDataFromTexboxes();
         }
 
@@ -78,16 +79,15 @@ namespace FirstPhoneBook
         {
             using (SqlConnection con = new SqlConnection(connectionString))
             {
-                int id = Int32.Parse(dataTable.Rows[Contacts_DataGrid.SelectedIndex][0].ToString());
-                SqlCommand sqlCommand = new SqlCommand($"UPDATE PhoneBookContent SET Name = @Name, Phone = @Phone, Email = @Email, Address = @Address WHERE Id = {id}");
+                SqlCommand sqlCommand = new SqlCommand("UPDATE PhoneBookContent SET Name = @Name, Phone = @Phone, Email = @Email, Address = @Address WHERE UserId = @Id", con);
 
                 sqlCommand.Parameters.AddWithValue("@Name", Name_TextBox.Text);
                 sqlCommand.Parameters.AddWithValue("@Phone", PhoneNo_TextBox.Text);
                 sqlCommand.Parameters.AddWithValue("@Email", EMail_TextBox.Text);
                 sqlCommand.Parameters.AddWithValue("@Address", Address_TextBox.Text);
+                sqlCommand.Parameters.AddWithValue("@Id", selectedUserId);
 
                 con.Open();
-
                 if (sqlCommand.ExecuteNonQuery() == 1)
                 {
                     MessageBox.Show("Successfully Save", "Successful");
@@ -97,16 +97,29 @@ namespace FirstPhoneBook
                     MessageBox.Show("Sorry Invalid Entry", "Error In Saving", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
+
+            UpdateDataGrid();
+            EraseDataFromTexboxes();
         }
-
-
 
         private void FillDataGrid()
         {
             using (SqlConnection con = new SqlConnection(connectionString))
             {
-                SqlCommand sqlCommand = new SqlCommand("SELECT Name, Phone, Email, Address FROM PhoneBookContent", con);
+                SqlCommand sqlCommand = new SqlCommand("SELECT UserId, Name, Phone, Email, Address FROM PhoneBookContent", con);
                 SqlDataAdapter sqlDataAdapter = new SqlDataAdapter(sqlCommand);
+                sqlDataAdapter.Fill(dataTable);
+                Contacts_DataGrid.ItemsSource = dataTable.DefaultView;
+            }
+        }
+
+        private void UpdateDataGrid()
+        {
+            using (SqlConnection con = new SqlConnection(connectionString))
+            {
+                SqlCommand sqlCommand = new SqlCommand("SELECT UserId, Name, Phone, Email, Address FROM PhoneBookContent", con);
+                SqlDataAdapter sqlDataAdapter = new SqlDataAdapter(sqlCommand);
+                dataTable.Clear();
                 sqlDataAdapter.Fill(dataTable);
                 Contacts_DataGrid.ItemsSource = dataTable.DefaultView;
             }
@@ -129,6 +142,7 @@ namespace FirstPhoneBook
                 int temp = Contacts_DataGrid.SelectedIndex;
                 if (Contacts_DataGrid.SelectedIndex < dataTable.Rows.Count)
                 {
+                    selectedUserId = dataTable.Rows[temp][0].ToString();
                     Name_TextBox.Text = dataTable.Rows[temp][1].ToString();
                     PhoneNo_TextBox.Text = dataTable.Rows[temp][2].ToString();
                     EMail_TextBox.Text = dataTable.Rows[temp][3].ToString();

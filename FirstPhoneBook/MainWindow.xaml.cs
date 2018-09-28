@@ -38,11 +38,11 @@ namespace FirstPhoneBook
         {
             EraseDataFromTexboxes();
 
+            New_Button.IsEnabled = false;
             Edit_Button.IsEnabled = false;
             Save_Button.IsEnabled = true;
-            New_Button.IsEnabled = false;
-
-
+            Delete_Button.IsEnabled = false;
+           
             Name_TextBox.IsReadOnly = false;
             PhoneNo_TextBox.IsReadOnly = false;
             EMail_TextBox.IsReadOnly = false;
@@ -54,10 +54,11 @@ namespace FirstPhoneBook
         {
             componentIsEdited = true;
 
-            Save_Button.IsEnabled = true;
             New_Button.IsEnabled = false;
-            SearchButton.IsEnabled = false;
+            Save_Button.IsEnabled = true;
             Edit_Button.IsEnabled = false;
+            Delete_Button.IsEnabled = false;
+            SearchButton.IsEnabled = false;
 
             Name_TextBox.IsReadOnly = false;
             PhoneNo_TextBox.IsReadOnly = false;
@@ -76,12 +77,18 @@ namespace FirstPhoneBook
             ParseTextBoxesSetSelectedContactData();
 
             if (componentIsEdited == false)
-                dataBaseActions.SaveNewDataInput(selectedContactData);
+                dataBaseActions.SaveNewContact(selectedContactData);
             else
-                dataBaseActions.SaveEditedDataInput(selectedContactData);
+                dataBaseActions.SaveEditedContact(selectedContactData);
 
             SetInitialState();
             componentIsEdited = false;
+        }
+
+        private void Delete_Button_Click(object sender, RoutedEventArgs e)
+        {
+            dataBaseActions.DeleteContact(selectedContactData);
+            SetInitialState();
         }
 
         private void SearchButton_Click(object sender, RoutedEventArgs e)
@@ -104,6 +111,7 @@ namespace FirstPhoneBook
                     selectedContactData.Address = Address_TextBox.Text  = dataBaseActions.DataTable.Rows[selectedIndex][4].ToString();
                     Edit_Button.IsEnabled = true;
                     Save_Button.IsEnabled = false;
+                    Delete_Button.IsEnabled = true;
                     Contacts_DataGrid.SelectedIndex = -1;
                 }
             }
@@ -115,6 +123,7 @@ namespace FirstPhoneBook
             New_Button.IsEnabled = true;
             Edit_Button.IsEnabled = false;
             Save_Button.IsEnabled = false;
+            Delete_Button.IsEnabled = false;
             SearchButton.IsEnabled = true;
 
             Name_TextBox.IsReadOnly = true;

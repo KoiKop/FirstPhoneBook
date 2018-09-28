@@ -32,6 +32,7 @@
             </DataGrid.Columns>
         </DataGrid>
         <Button x:Name="SearchButton" Content="Search" HorizontalAlignment="Left" Margin="531,245,0,0" VerticalAlignment="Top" Width="101" Click="SearchButton_Click"/>
+        <Button x:Name="Delete_Button" Content="Delete" HorizontalAlignment="Left" Margin="531,197,0,0" VerticalAlignment="Top" Width="101" Click="Delete_Button_Click"/>
 
 
     </Grid>

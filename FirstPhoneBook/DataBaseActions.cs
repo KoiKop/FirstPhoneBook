@@ -1,23 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Data;
+﻿using System.Data;
 using System.Data.SqlClient;
 using System.Windows;
+using System.Configuration;
 
 namespace FirstPhoneBook
 {
     class DataBaseActions
     {
-        string connectionString = @"Data Source=.\sqlexpress;Initial Catalog=PhoneBookContent;Integrated Security=True";
-        //string connectionString = ConfigurationManager.ConnectionStrings["ConString"].ConnectionString;
+        readonly string connectionString = ConfigurationManager.ConnectionStrings["ConString"].ConnectionString;
 
         DataTable dataTable = new DataTable("PhoneBook");
 
         public DataTable DataTable { get; set; }
-        //public string SelectedUserId { get; set; }
 
         public DataBaseActions()
         {
@@ -36,11 +30,10 @@ namespace FirstPhoneBook
                 dataTable.Clear();
                 sqlDataAdapter.Fill(dataTable);
                 return dataTable.DefaultView;
-                //Contacts_DataGrid.ItemsSource = dataTable.DefaultView;
             }
         }
 
-        public void SaveNewDataInput(SelectedContactData selectedContactData)
+        public void SaveNewContact(SelectedContactData selectedContactData)
         {
             using (SqlConnection con = new SqlConnection(connectionString))
             {
@@ -63,7 +56,7 @@ namespace FirstPhoneBook
             }
         }
 
-        public void SaveEditedDataInput(SelectedContactData selectedContactData)
+        public void SaveEditedContact(SelectedContactData selectedContactData)
         {
             using (SqlConnection con = new SqlConnection(connectionString))
             {
@@ -87,6 +80,35 @@ namespace FirstPhoneBook
             }
         }
 
+        public void DeleteContact(SelectedContactData selectedContactData)
+        {
+            using (SqlConnection con = new SqlConnection(connectionString))
+            {
+                SqlCommand sqlCommand = new SqlCommand("DELETE FROM PhoneBookContent WHERE UserId = @Id", con);
+                
+                sqlCommand.Parameters.AddWithValue("@Id", selectedContactData.Id);
+
+                if (MessageBox.Show("Are you sure to delete it?", "Question", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.No)
+                {
+                    //do no stuff
+                    MessageBox.Show("Ok, you can delete him later", "Uhhh...");
+                }
+                else
+                {
+                    //do yes stuff
+                    con.Open();
+                    if (sqlCommand.ExecuteNonQuery() == 1)
+                    {
+                        MessageBox.Show("Successfully Deleted", "Successful");
+                    }
+                    else
+                    {
+                        MessageBox.Show("Sorry, entity could not be deleted", "Error In Deleting", MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
+                }
+            }
+        }
+
         public DataView FillDataGrid()
         {
             using (SqlConnection con = new SqlConnection(connectionString))
@@ -96,7 +118,6 @@ namespace FirstPhoneBook
                 dataTable.Clear();
                 sqlDataAdapter.Fill(dataTable);
                 return dataTable.DefaultView;
-                //Contacts_DataGrid.ItemsSource = dataTable.DefaultView;
             }
         }
     }

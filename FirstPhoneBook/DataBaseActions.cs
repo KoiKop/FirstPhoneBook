@@ -26,10 +26,7 @@ namespace FirstPhoneBook
 
                 sqlCommand.Parameters.AddWithValue("@Search", $"%{searchPhrase}%");
 
-                SqlDataAdapter sqlDataAdapter = new SqlDataAdapter(sqlCommand);
-                dataTable.Clear();
-                sqlDataAdapter.Fill(dataTable);
-                return dataTable.DefaultView;
+                return FillDataViewWithProvidedData(sqlCommand);
             }
         }
 
@@ -46,13 +43,9 @@ namespace FirstPhoneBook
                 con.Open();
 
                 if (sqlCommand.ExecuteNonQuery() == 1)
-                {
                     MessageBox.Show("Successfully Save", "Successful");
-                }
                 else
-                {
                     MessageBox.Show("Sorry Invalid Entry", "Error In Saving", MessageBoxButton.OK, MessageBoxImage.Error);
-                }
             }
         }
 
@@ -90,21 +83,16 @@ namespace FirstPhoneBook
 
                 if (MessageBox.Show("Are you sure to delete it?", "Question", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.No)
                 {
-                    //do no stuff
                     MessageBox.Show("Ok, you can delete him later", "Uhhh...");
                 }
                 else
                 {
-                    //do yes stuff
                     con.Open();
+
                     if (sqlCommand.ExecuteNonQuery() == 1)
-                    {
                         MessageBox.Show("Successfully Deleted", "Successful");
-                    }
                     else
-                    {
                         MessageBox.Show("Sorry, entity could not be deleted", "Error In Deleting", MessageBoxButton.OK, MessageBoxImage.Error);
-                    }
                 }
             }
         }
@@ -113,12 +101,18 @@ namespace FirstPhoneBook
         {
             using (SqlConnection con = new SqlConnection(connectionString))
             {
-                SqlCommand sqlCommand = new SqlCommand("SELECT UserId, Name, Phone, Email, Address FROM PhoneBookContent", con);
-                SqlDataAdapter sqlDataAdapter = new SqlDataAdapter(sqlCommand);
-                dataTable.Clear();
-                sqlDataAdapter.Fill(dataTable);
-                return dataTable.DefaultView;
+                SqlCommand sqlCommand = new SqlCommand("SELECT UserId, Name, Phone, Email, Address FROM PhoneBookContent ORDER BY Name", con);
+
+                return FillDataViewWithProvidedData(sqlCommand);
             }
+        }
+
+        private DataView FillDataViewWithProvidedData(SqlCommand sqlCommand)
+        {
+            SqlDataAdapter sqlDataAdapter = new SqlDataAdapter(sqlCommand);
+            dataTable.Clear();
+            sqlDataAdapter.Fill(dataTable);
+            return dataTable.DefaultView;
         }
     }
 }

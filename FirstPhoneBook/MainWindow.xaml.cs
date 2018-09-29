@@ -32,7 +32,7 @@ namespace FirstPhoneBook
         DataBaseActions dataBaseActions = new DataBaseActions();
         SelectedContactData selectedContactData = new SelectedContactData();
 
-        bool componentIsEdited = false;
+        bool contactIsEdited = false;
 
         private void New_Button_Click(object sender, RoutedEventArgs e)
         {
@@ -42,6 +42,7 @@ namespace FirstPhoneBook
             Edit_Button.IsEnabled = false;
             Save_Button.IsEnabled = true;
             Delete_Button.IsEnabled = false;
+            SearchButton.IsEnabled = false;
            
             Name_TextBox.IsReadOnly = false;
             PhoneNo_TextBox.IsReadOnly = false;
@@ -52,7 +53,7 @@ namespace FirstPhoneBook
 
         private void Edit_Button_Click(object sender, RoutedEventArgs e)
         {
-            componentIsEdited = true;
+            contactIsEdited = true;
 
             New_Button.IsEnabled = false;
             Save_Button.IsEnabled = true;
@@ -76,13 +77,12 @@ namespace FirstPhoneBook
         {
             ParseTextBoxesSetSelectedContactData();
 
-            if (componentIsEdited == false)
+            if (contactIsEdited == false)
                 dataBaseActions.SaveNewContact(selectedContactData);
             else
                 dataBaseActions.SaveEditedContact(selectedContactData);
 
             SetInitialState();
-            componentIsEdited = false;
         }
 
         private void Delete_Button_Click(object sender, RoutedEventArgs e)
@@ -120,6 +120,7 @@ namespace FirstPhoneBook
         private void SetInitialState()
         {
             EraseDataFromTexboxes();
+
             New_Button.IsEnabled = true;
             Edit_Button.IsEnabled = false;
             Save_Button.IsEnabled = false;
@@ -132,14 +133,14 @@ namespace FirstPhoneBook
             Address_TextBox.IsReadOnly = true;
             Search_TextBox.IsReadOnly = false;
 
-            componentIsEdited = false;
+            contactIsEdited = false;
 
             Contacts_DataGrid.ItemsSource = dataBaseActions.FillDataGrid();
         }
 
         private void EraseDataFromTexboxes()
         {
-            Name_TextBox.Text = PhoneNo_TextBox.Text = EMail_TextBox.Text = Address_TextBox.Text = string.Empty;
+            Name_TextBox.Text = PhoneNo_TextBox.Text = EMail_TextBox.Text = Address_TextBox.Text = Search_TextBox.Text = string.Empty;
         }
 
         private void ParseTextBoxesSetSelectedContactData()

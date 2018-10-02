@@ -31,6 +31,7 @@ namespace FirstPhoneBook
 
         DataBaseActions dataBaseActions = new DataBaseActions();
         SelectedContactData selectedContactData = new SelectedContactData();
+        MessageBoxController messageBoxController = new MessageBoxController();
 
         bool contactIsEdited = false;
 
@@ -78,16 +79,27 @@ namespace FirstPhoneBook
             ParseTextBoxesSetSelectedContactData();
 
             if (contactIsEdited == false)
-                dataBaseActions.SaveNewContact(selectedContactData);
+            {
+                var saveNewContact = dataBaseActions.SaveNewContact(selectedContactData);
+                messageBoxController.SaveContactStatus(saveNewContact);
+            }
             else
-                dataBaseActions.SaveEditedContact(selectedContactData);
+            {
+                var saveEditedContact = dataBaseActions.SaveEditedContact(selectedContactData);
+                messageBoxController.SaveContactStatus(saveEditedContact);
+            }
 
             SetInitialState();
         }
 
         private void Delete_Button_Click(object sender, RoutedEventArgs e)
         {
-            dataBaseActions.DeleteContact(selectedContactData);
+            if (messageBoxController.ConfirmDeletingContact() == MessageBoxResult.Yes)
+            {
+                var deleteContect = dataBaseActions.DeleteContact(selectedContactData);
+                messageBoxController.DeleteContactStatus(deleteContect);
+            }
+            
             SetInitialState();
         }
 

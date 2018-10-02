@@ -30,7 +30,7 @@ namespace FirstPhoneBook
             }
         }
 
-        public void SaveNewContact(SelectedContactData selectedContactData)
+        public bool SaveNewContact(SelectedContactData selectedContactData)
         {
             using (SqlConnection con = new SqlConnection(connectionString))
             {
@@ -43,13 +43,13 @@ namespace FirstPhoneBook
                 con.Open();
 
                 if (sqlCommand.ExecuteNonQuery() == 1)
-                    MessageBox.Show("Successfully Save", "Successful");
+                    return true;
                 else
-                    MessageBox.Show("Sorry Invalid Entry", "Error In Saving", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return false;
             }
         }
 
-        public void SaveEditedContact(SelectedContactData selectedContactData)
+        public bool SaveEditedContact(SelectedContactData selectedContactData)
         {
             using (SqlConnection con = new SqlConnection(connectionString))
             {
@@ -62,18 +62,15 @@ namespace FirstPhoneBook
                 sqlCommand.Parameters.AddWithValue("@Id", selectedContactData.Id);
 
                 con.Open();
+
                 if (sqlCommand.ExecuteNonQuery() == 1)
-                {
-                    MessageBox.Show("Successfully Save", "Successful");
-                }
+                    return true;
                 else
-                {
-                    MessageBox.Show("Sorry Invalid Entry", "Error In Saving", MessageBoxButton.OK, MessageBoxImage.Error);
-                }
+                    return false;
             }
         }
 
-        public void DeleteContact(SelectedContactData selectedContactData)
+        public bool DeleteContact(SelectedContactData selectedContactData)
         {
             using (SqlConnection con = new SqlConnection(connectionString))
             {
@@ -81,19 +78,12 @@ namespace FirstPhoneBook
                 
                 sqlCommand.Parameters.AddWithValue("@Id", selectedContactData.Id);
 
-                if (MessageBox.Show("Are you sure to delete it?", "Question", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.No)
-                {
-                    MessageBox.Show("Ok, you can delete him later", "Uhhh...");
-                }
-                else
-                {
-                    con.Open();
+                con.Open();
 
-                    if (sqlCommand.ExecuteNonQuery() == 1)
-                        MessageBox.Show("Successfully Deleted", "Successful");
-                    else
-                        MessageBox.Show("Sorry, entity could not be deleted", "Error In Deleting", MessageBoxButton.OK, MessageBoxImage.Error);
-                }
+                if (sqlCommand.ExecuteNonQuery() == 1)
+                    return true;
+                else
+                    return false;
             }
         }
 

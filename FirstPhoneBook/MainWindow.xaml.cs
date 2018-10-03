@@ -83,9 +83,9 @@ namespace FirstPhoneBook
             }
             else
             {
-                var contactDataToEdition = GetSelectedContactDataToEdit();
-                var quwasQueryExecuted = dataBaseActions.SaveEditedContact(contactDataToEdition);
-                messageBoxController.SaveContactStatus(quwasQueryExecuted);
+                var contactDataToEdition = GetContactDataToEdition();
+                var wasQueryExecuted = dataBaseActions.SaveEditedContact(contactDataToEdition);
+                messageBoxController.SaveContactStatus(wasQueryExecuted);
             }
 
             SetInitialState();
@@ -128,7 +128,7 @@ namespace FirstPhoneBook
             }
         }
 
-        private ContactDataToEdition GetSelectedContactDataToEdit()
+        private ContactDataToEdition GetContactDataToEdition()
         {
             int selectedIndex = Contacts_DataGrid.SelectedIndex;
 

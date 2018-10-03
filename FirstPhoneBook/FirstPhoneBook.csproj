@@ -55,8 +55,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="ContactDataToEdition.cs" />
     <Compile Include="MessageBoxController.cs" />
-    <Compile Include="SelectedContactData.cs" />
+    <Compile Include="NewContactData.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

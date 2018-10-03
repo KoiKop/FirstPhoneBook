@@ -25,7 +25,7 @@ namespace FirstPhoneBook
                 return MessageBoxResult.Yes;
         }
 
-        public MessageBoxResult DeleteContactStatus(bool wasQueryExecuted)
+        public MessageBoxResult DisplayDeleteContactStatus(bool wasQueryExecuted)
         {
             if (wasQueryExecuted == true)
                 return MessageBox.Show("Successfully Deleted", "Successful");

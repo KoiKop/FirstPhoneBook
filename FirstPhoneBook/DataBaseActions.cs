@@ -30,15 +30,15 @@ namespace FirstPhoneBook
             }
         }
 
-        public bool SaveNewContact(SelectedContactData selectedContactData)
+        public bool SaveNewContact(NewContactData newContactData)
         {
             using (SqlConnection con = new SqlConnection(connectionString))
             {
                 SqlCommand sqlCommand = new SqlCommand("INSERT INTO PhoneBookContent (Name,Phone,Email,Address) Values (@Name, @Phone, @Email, @Address)", con);
-                sqlCommand.Parameters.AddWithValue("@Name", selectedContactData.Name);
-                sqlCommand.Parameters.AddWithValue("@Phone", selectedContactData.Phone);
-                sqlCommand.Parameters.AddWithValue("@Email", selectedContactData.Email);
-                sqlCommand.Parameters.AddWithValue("@Address", selectedContactData.Address);
+                sqlCommand.Parameters.AddWithValue("@Name", newContactData.Name);
+                sqlCommand.Parameters.AddWithValue("@Phone", newContactData.Phone);
+                sqlCommand.Parameters.AddWithValue("@Email", newContactData.Email);
+                sqlCommand.Parameters.AddWithValue("@Address", newContactData.Address);
 
                 con.Open();
 
@@ -49,17 +49,17 @@ namespace FirstPhoneBook
             }
         }
 
-        public bool SaveEditedContact(SelectedContactData selectedContactData)
+        public bool SaveEditedContact(ContactDataToEdition contactDataToEdition)
         {
             using (SqlConnection con = new SqlConnection(connectionString))
             {
                 SqlCommand sqlCommand = new SqlCommand("UPDATE PhoneBookContent SET Name = @Name, Phone = @Phone, Email = @Email, Address = @Address WHERE UserId = @Id", con);
 
-                sqlCommand.Parameters.AddWithValue("@Name", selectedContactData.Name);
-                sqlCommand.Parameters.AddWithValue("@Phone", selectedContactData.Phone);
-                sqlCommand.Parameters.AddWithValue("@Email", selectedContactData.Email);
-                sqlCommand.Parameters.AddWithValue("@Address", selectedContactData.Address);
-                sqlCommand.Parameters.AddWithValue("@Id", selectedContactData.Id);
+                sqlCommand.Parameters.AddWithValue("@Name", contactDataToEdition.Name);
+                sqlCommand.Parameters.AddWithValue("@Phone", contactDataToEdition.Phone);
+                sqlCommand.Parameters.AddWithValue("@Email", contactDataToEdition.Email);
+                sqlCommand.Parameters.AddWithValue("@Address", contactDataToEdition.Address);
+                sqlCommand.Parameters.AddWithValue("@Id", contactDataToEdition.Id);
 
                 con.Open();
 
@@ -70,13 +70,13 @@ namespace FirstPhoneBook
             }
         }
 
-        public bool DeleteContact(SelectedContactData selectedContactData)
+        public bool DeleteContact(int selectedContactId)
         {
             using (SqlConnection con = new SqlConnection(connectionString))
             {
                 SqlCommand sqlCommand = new SqlCommand("DELETE FROM PhoneBookContent WHERE UserId = @Id", con);
                 
-                sqlCommand.Parameters.AddWithValue("@Id", selectedContactData.Id);
+                sqlCommand.Parameters.AddWithValue("@Id", selectedContactId);
 
                 con.Open();
 

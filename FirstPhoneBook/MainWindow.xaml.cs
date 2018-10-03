@@ -30,7 +30,6 @@ namespace FirstPhoneBook
         }
 
         DataBaseActions dataBaseActions = new DataBaseActions();
-        SelectedContactData selectedContactData = new SelectedContactData();
         MessageBoxController messageBoxController = new MessageBoxController();
 
         bool contactIsEdited = false;
@@ -76,17 +75,17 @@ namespace FirstPhoneBook
 
         private void Save_Button_Click(object sender, RoutedEventArgs e)
         {
-            ParseTextBoxesSetSelectedContactData();
-
             if (contactIsEdited == false)
             {
-                var saveNewContact = dataBaseActions.SaveNewContact(selectedContactData);
-                messageBoxController.SaveContactStatus(saveNewContact);
+                var newContactData = GetNewContactDataFromTextBoxes();
+                var wasQueryExecuted = dataBaseActions.SaveNewContact(newContactData);
+                messageBoxController.SaveContactStatus(wasQueryExecuted);
             }
             else
             {
-                var saveEditedContact = dataBaseActions.SaveEditedContact(selectedContactData);
-                messageBoxController.SaveContactStatus(saveEditedContact);
+                var contactDataToEdition = GetSelectedContactDataToEdit();
+                var quwasQueryExecuted = dataBaseActions.SaveEditedContact(contactDataToEdition);
+                messageBoxController.SaveContactStatus(quwasQueryExecuted);
             }
 
             SetInitialState();
@@ -96,8 +95,9 @@ namespace FirstPhoneBook
         {
             if (messageBoxController.ConfirmDeletingContact() == MessageBoxResult.Yes)
             {
-                var deleteContect = dataBaseActions.DeleteContact(selectedContactData);
-                messageBoxController.DeleteContactStatus(deleteContect);
+                var selectedContactId = GetSelectedContactId();
+                var deleteContect = dataBaseActions.DeleteContact(selectedContactId);
+                messageBoxController.DisplayDeleteContactStatus(deleteContect);
             }
             
             SetInitialState();
@@ -116,17 +116,52 @@ namespace FirstPhoneBook
                 int selectedIndex = Contacts_DataGrid.SelectedIndex;
                 if (Contacts_DataGrid.SelectedIndex < dataBaseActions.DataTable.Rows.Count)
                 {
-                    selectedContactData.Id                              = dataBaseActions.DataTable.Rows[selectedIndex][0].ToString();
-                    selectedContactData.Name    = Name_TextBox.Text     = dataBaseActions.DataTable.Rows[selectedIndex][1].ToString();
-                    selectedContactData.Phone   = PhoneNo_TextBox.Text  = dataBaseActions.DataTable.Rows[selectedIndex][2].ToString();
-                    selectedContactData.Email   = EMail_TextBox.Text    = dataBaseActions.DataTable.Rows[selectedIndex][3].ToString();
-                    selectedContactData.Address = Address_TextBox.Text  = dataBaseActions.DataTable.Rows[selectedIndex][4].ToString();
+                    Name_TextBox.Text     = dataBaseActions.DataTable.Rows[selectedIndex][1].ToString();
+                    PhoneNo_TextBox.Text  = dataBaseActions.DataTable.Rows[selectedIndex][2].ToString();
+                    EMail_TextBox.Text    = dataBaseActions.DataTable.Rows[selectedIndex][3].ToString();
+                    Address_TextBox.Text  = dataBaseActions.DataTable.Rows[selectedIndex][4].ToString();
                     Edit_Button.IsEnabled = true;
                     Save_Button.IsEnabled = false;
                     Delete_Button.IsEnabled = true;
-                    Contacts_DataGrid.SelectedIndex = -1;
+                    //Contacts_DataGrid.SelectedIndex = -1;
                 }
             }
+        }
+
+        private ContactDataToEdition GetSelectedContactDataToEdit()
+        {
+            int selectedIndex = Contacts_DataGrid.SelectedIndex;
+
+            ContactDataToEdition contactDataToEdition = new ContactDataToEdition
+            {
+                Id = Int32.Parse(dataBaseActions.DataTable.Rows[selectedIndex][0].ToString()),
+                Name = Name_TextBox.Text,
+                Phone = PhoneNo_TextBox.Text,
+                Email = EMail_TextBox.Text,
+                Address = Address_TextBox.Text
+            };
+
+            return contactDataToEdition;
+        }
+
+        private int GetSelectedContactId()
+        {
+            int selectedIndex = Contacts_DataGrid.SelectedIndex;
+
+            return Int32.Parse(dataBaseActions.DataTable.Rows[selectedIndex][0].ToString());
+        }
+
+        private NewContactData GetNewContactDataFromTextBoxes()
+        {
+            NewContactData newContactData = new NewContactData
+            {
+                Name = Name_TextBox.Text,
+                Phone = PhoneNo_TextBox.Text,
+                Email = EMail_TextBox.Text,
+                Address = Address_TextBox.Text
+            };
+
+            return newContactData;
         }
 
         private void SetInitialState()
@@ -153,14 +188,6 @@ namespace FirstPhoneBook
         private void EraseDataFromTexboxes()
         {
             Name_TextBox.Text = PhoneNo_TextBox.Text = EMail_TextBox.Text = Address_TextBox.Text = Search_TextBox.Text = string.Empty;
-        }
-
-        private void ParseTextBoxesSetSelectedContactData()
-        {
-            selectedContactData.Name = Name_TextBox.Text;
-            selectedContactData.Phone = PhoneNo_TextBox.Text;
-            selectedContactData.Email = EMail_TextBox.Text;
-            selectedContactData.Address = Address_TextBox.Text;
-        }        
+        }       
     }
 }

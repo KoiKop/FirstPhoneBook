@@ -1,6 +1,7 @@
 ﻿
 using System.Data.SqlClient;
 using System.Configuration;
+using System.Data;
 
 namespace FirstPhoneBookTests
 {
@@ -12,9 +13,46 @@ namespace FirstPhoneBookTests
         {
             using (SqlConnection con = new SqlConnection(connectionString))
             {
-                SqlCommand sqlCommand = new SqlCommand("CREATE TABLE PhoneBookContentTests(UserId int NOT NULL, Name varchar(255), Phone varchar(50), Email varchar(255), Address varchar(255), PRIMARY KEY (UserId))", con);
+                SqlCommand sqlCommand = new SqlCommand("CREATE TABLE PhoneBookContent(UserId int NOT NULL IDENTITY(1,1), Name varchar(255), Phone varchar(50), Email varchar(255), Address varchar(255), PRIMARY KEY (UserId))", con);
                 con.Open();
                 sqlCommand.ExecuteNonQuery();     
+            }
+        }
+
+        public void AddContactToDB(ContactDataToTests contactDataToTests)
+        {
+            using (SqlConnection con = new SqlConnection(connectionString))
+            {
+                SqlCommand sqlCommand = new SqlCommand("INSERT INTO PhoneBookContent(Name,Phone,Email,Address) Values (@Name, @Phone, @Email, @Address)", con);
+                sqlCommand.Parameters.AddWithValue("@Name", contactDataToTests.Name);
+                sqlCommand.Parameters.AddWithValue("@Phone", contactDataToTests.Phone);
+                sqlCommand.Parameters.AddWithValue("@Email", contactDataToTests.Email);
+                sqlCommand.Parameters.AddWithValue("@Address", contactDataToTests.Address);
+
+                con.Open();
+                sqlCommand.ExecuteNonQuery();
+            }
+        }
+
+        public ContactDataToTests GetContactDataFromDB(int id)
+        {
+            using (SqlConnection con = new SqlConnection(connectionString))
+            {
+                SqlCommand sqlCommand = new SqlCommand("SELECT * FROM PhoneBookContent WHERE UserId = @Id", con);
+
+                sqlCommand.Parameters.AddWithValue("@Id", id);
+
+                SqlDataAdapter sqlDataAdapter = new SqlDataAdapter(sqlCommand);
+                DataTable dataTable = new DataTable("PhoneBookTests");
+                sqlDataAdapter.Fill(dataTable);
+
+                ContactDataToTests contactDataToTests = new ContactDataToTests();
+                contactDataToTests.Name = dataTable.Rows[0]["Name"].ToString();
+                contactDataToTests.Phone = dataTable.Rows[0]["Phone"].ToString();
+                contactDataToTests.Email = dataTable.Rows[0]["Email"].ToString();
+                contactDataToTests.Address = dataTable.Rows[0]["Address"].ToString();
+
+                return contactDataToTests;
             }
         }
 
@@ -22,7 +60,7 @@ namespace FirstPhoneBookTests
         {
             using (SqlConnection con = new SqlConnection(connectionString))
             {
-                SqlCommand sqlCommand = new SqlCommand("DROP TABLE PhoneBookContentTests", con);
+                SqlCommand sqlCommand = new SqlCommand("DROP TABLE PhoneBookContent", con);
                 con.Open();
                 sqlCommand.ExecuteNonQuery();
             }

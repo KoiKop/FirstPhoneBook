@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace FirstPhoneBook
 {
-    class ContactDataToEdition
+    public class ContactDataToEdition
     {
         public string Name { get; set; }
         public string Phone { get; set; }

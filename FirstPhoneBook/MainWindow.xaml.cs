@@ -26,12 +26,13 @@ namespace FirstPhoneBook
         public MainWindow()
         {
             InitializeComponent();
-            SetInitialState(); 
+            SetInitialState();
         }
 
-        DataBaseActions dataBaseActions = new DataBaseActions();
+        DataBaseActions dataBaseActions = new DataBaseActions(PhoneBookConfiguration.ConnectionString);
         MessageBoxController messageBoxController = new MessageBoxController();
-
+        PhoneBookConfiguration phoneBookConfiguration = new PhoneBookConfiguration();
+        
         bool contactIsEdited = false;
 
         private void New_Button_Click(object sender, RoutedEventArgs e)

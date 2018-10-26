@@ -1,18 +1,38 @@
-﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using FirstPhoneBook;
+using FluentAssertions;
+using Xunit;
 
 namespace FirstPhoneBookTests
 {
-    [TestClass]
     public class DataBaseActionTests
     {
-        [TestMethod]
-        public void TestMethod1()
+        [Fact]
+        public void SavingNewContact()
         {
+            //given
             TestsHelper testsHelper = new TestsHelper();
-
-            testsHelper.SetupPhoneBookContentTestsTable();
             testsHelper.DropPhoneBookContentTestsTable();
+
+            NewContactData expectedContactData = new NewContactData()
+            {
+                Name = "Stefan Burczymucha",
+                Phone = "6880943",
+                Email = "sb@wp.pl",
+                Address = "Nie wiem kaj to"
+            };
+            
+            testsHelper.SetupPhoneBookContentTestsTable();
+
+            DataBaseActions dataBaseActions = new DataBaseActions(PhoneBookTestsConfiguraton.ConnectionString);
+            //when
+
+            dataBaseActions.SaveNewContact(expectedContactData);
+            var savedContactData = testsHelper.GetContactDataFromDB(1);
+
+            //then
+
+            savedContactData.Should().BeEquivalentTo(expectedContactData);
+
         }
     }
 }

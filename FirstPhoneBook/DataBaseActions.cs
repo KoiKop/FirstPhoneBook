@@ -1,21 +1,17 @@
 ﻿using System.Data;
 using System.Data.SqlClient;
-using System.Windows;
-using System.Configuration;
-
 namespace FirstPhoneBook
 {
-    class DataBaseActions
+    public class DataBaseActions
     {
-        readonly string connectionString = ConfigurationManager.ConnectionStrings["ConString"].ConnectionString;
-
         DataTable dataTable = new DataTable("PhoneBook");
-
         public DataTable DataTable { get; set; }
+        private readonly string connectionString;
 
-        public DataBaseActions()
+        public DataBaseActions(string connectionString)
         {
             DataTable = dataTable;
+            this.connectionString = connectionString;
         }
 
         public DataView SearchThruDataBase(string searchPhrase)

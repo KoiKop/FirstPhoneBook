@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FirstPhoneBook
+namespace FirstPhoneBookTests
 {
-    public class ContactDataToEdition
+    public class ContactDataToTests
     {
         public string Name { get; set; }
         public string Phone { get; set; }

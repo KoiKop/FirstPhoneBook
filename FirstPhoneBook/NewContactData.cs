@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace FirstPhoneBook
 {
-    class NewContactData
+    public class NewContactData
     {
         public string Name { get; set; }
         public string Phone { get; set; }

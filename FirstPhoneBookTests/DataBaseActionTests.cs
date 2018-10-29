@@ -1,12 +1,12 @@
 ﻿using FirstPhoneBook;
-using FluentAssertions;
-using Xunit;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace FirstPhoneBookTests
 {
+    [TestClass]
     public class DataBaseActionTests
     {
-        [Fact]
+        [TestMethod]
         public void SavingNewContact()
         {
             //given
@@ -20,7 +20,7 @@ namespace FirstPhoneBookTests
                 Email = "sb@wp.pl",
                 Address = "Nie wiem kaj to"
             };
-            
+
             testsHelper.SetupPhoneBookContentTestsTable();
 
             DataBaseActions dataBaseActions = new DataBaseActions(PhoneBookTestsConfiguraton.ConnectionString);
@@ -31,8 +31,7 @@ namespace FirstPhoneBookTests
 
             //then
 
-            savedContactData.Should().BeEquivalentTo(expectedContactData);
-
+            Assert.AreEqual(savedContactData.Name, expectedContactData.Name);
         }
     }
 }

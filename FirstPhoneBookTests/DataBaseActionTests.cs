@@ -32,6 +32,10 @@ namespace FirstPhoneBookTests
             //then
 
             Assert.AreEqual(savedContactData.Name, expectedContactData.Name);
+            Assert.AreEqual(savedContactData.Phone, expectedContactData.Phone);
+            Assert.AreEqual(savedContactData.Email, expectedContactData.Email);
+            Assert.AreEqual(savedContactData.Address, expectedContactData.Address);
+
         }
     }
 }

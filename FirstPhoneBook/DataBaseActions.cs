@@ -1,4 +1,5 @@
-﻿using System.Data;
+﻿using System;
+using System.Data;
 using System.Data.SqlClient;
 namespace FirstPhoneBook
 {
@@ -26,7 +27,7 @@ namespace FirstPhoneBook
             }
         }
 
-        public bool SaveNewContact(NewContactData newContactData)
+        public DbQueryExecutionStatus SaveNewContact(NewContactData newContactData)
         {
             using (SqlConnection con = new SqlConnection(connectionString))
             {
@@ -36,16 +37,11 @@ namespace FirstPhoneBook
                 sqlCommand.Parameters.AddWithValue("@Email", newContactData.Email);
                 sqlCommand.Parameters.AddWithValue("@Address", newContactData.Address);
 
-                con.Open();
-
-                if (sqlCommand.ExecuteNonQuery() == 1)
-                    return true;
-                else
-                    return false;
+                return ConnectAndExecuteQuery(con, sqlCommand);
             }
         }
 
-        public bool SaveEditedContact(ContactDataToEdition contactDataToEdition)
+        public DbQueryExecutionStatus SaveEditedContact(ContactDataToEdition contactDataToEdition)
         {
             using (SqlConnection con = new SqlConnection(connectionString))
             {
@@ -57,16 +53,13 @@ namespace FirstPhoneBook
                 sqlCommand.Parameters.AddWithValue("@Address", contactDataToEdition.Address);
                 sqlCommand.Parameters.AddWithValue("@Id", contactDataToEdition.Id);
 
-                con.Open();
-
-                if (sqlCommand.ExecuteNonQuery() == 1)
-                    return true;
-                else
-                    return false;
+                return ConnectAndExecuteQuery(con, sqlCommand);
             }
         }
 
-        public bool DeleteContact(int selectedContactId)
+        
+
+        public DbQueryExecutionStatus DeleteContact(int selectedContactId)
         {
             using (SqlConnection con = new SqlConnection(connectionString))
             {
@@ -74,12 +67,7 @@ namespace FirstPhoneBook
                 
                 sqlCommand.Parameters.AddWithValue("@Id", selectedContactId);
 
-                con.Open();
-
-                if (sqlCommand.ExecuteNonQuery() == 1)
-                    return true;
-                else
-                    return false;
+                return ConnectAndExecuteQuery(con, sqlCommand);
             }
         }
 
@@ -99,6 +87,31 @@ namespace FirstPhoneBook
             dataTable.Clear();
             sqlDataAdapter.Fill(dataTable);
             return dataTable.DefaultView;
+        }
+
+        private static DbQueryExecutionStatus ConnectAndExecuteQuery(SqlConnection con, SqlCommand sqlCommand)
+        {
+            DbQueryExecutionStatus dBConnectionStatus = new DbQueryExecutionStatus();
+
+            try
+            {
+                con.Open();
+                sqlCommand.ExecuteNonQuery();
+                dBConnectionStatus.QuerySucceed = true;
+                return dBConnectionStatus;
+            }
+            catch (SqlException ex)
+            {
+                dBConnectionStatus.QuerySucceed = false;
+                dBConnectionStatus.ExceptionMessage = ex.Message;
+                return dBConnectionStatus;
+            }
+            catch (Exception ex)
+            {
+                dBConnectionStatus.QuerySucceed = false;
+                dBConnectionStatus.ExceptionMessage = ex.Message;
+                return dBConnectionStatus;
+            }
         }
     }
 }

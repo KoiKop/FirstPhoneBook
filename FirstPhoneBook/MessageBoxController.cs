@@ -9,12 +9,12 @@ namespace FirstPhoneBook
 {
     public class MessageBoxController
     {
-        public MessageBoxResult SaveContactStatus(bool wasQueryExecuted)
+        public MessageBoxResult SaveContactStatus(DbQueryExecutionStatus wasQueryExecuted)
         {
-            if (wasQueryExecuted == true)
+            if (wasQueryExecuted.QuerySucceed == true)
                 return MessageBox.Show("Successfully Save", "Successful");
             else
-                return MessageBox.Show("Sorry Invalid Entry", "Error In Saving", MessageBoxButton.OK, MessageBoxImage.Error);
+                return MessageBox.Show(wasQueryExecuted.ExceptionMessage, "Error In Saving", MessageBoxButton.OK, MessageBoxImage.Error);
         }
 
         public MessageBoxResult ConfirmDeletingContact()
@@ -25,12 +25,12 @@ namespace FirstPhoneBook
                 return MessageBoxResult.Yes;
         }
 
-        public MessageBoxResult DisplayDeleteContactStatus(bool wasQueryExecuted)
+        public MessageBoxResult DisplayDeleteContactStatus(DbQueryExecutionStatus wasQueryExecuted)
         {
-            if (wasQueryExecuted == true)
+            if (wasQueryExecuted.QuerySucceed == true)
                 return MessageBox.Show("Successfully Deleted", "Successful");
             else
-                return MessageBox.Show("Sorry, contact could not be deleted", "Error In Saving", MessageBoxButton.OK, MessageBoxImage.Error);
+                return MessageBox.Show(wasQueryExecuted.ExceptionMessage, "Sorry, contact could not be deleted", MessageBoxButton.OK, MessageBoxImage.Error);
         }
     }
 }

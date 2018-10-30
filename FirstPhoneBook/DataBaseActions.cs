@@ -15,7 +15,7 @@ namespace FirstPhoneBook
             this.connectionString = connectionString;
         }
 
-        public DataView SearchThruDataBase(string searchPhrase)
+        public DataViewToFillDataGrid SearchThruDataBase(string searchPhrase)
         {
             using (SqlConnection con = new SqlConnection(connectionString))
             {
@@ -57,8 +57,6 @@ namespace FirstPhoneBook
             }
         }
 
-        
-
         public DbQueryExecutionStatus DeleteContact(int selectedContactId)
         {
             using (SqlConnection con = new SqlConnection(connectionString))
@@ -71,7 +69,7 @@ namespace FirstPhoneBook
             }
         }
 
-        public DataView FillDataGrid()
+        public DataViewToFillDataGrid FillDataGrid()
         {
             using (SqlConnection con = new SqlConnection(connectionString))
             {
@@ -81,15 +79,27 @@ namespace FirstPhoneBook
             }
         }
 
-        private DataView FillDataViewWithProvidedData(SqlCommand sqlCommand)
+        private DataViewToFillDataGrid FillDataViewWithProvidedData(SqlCommand sqlCommand)
         {
-            SqlDataAdapter sqlDataAdapter = new SqlDataAdapter(sqlCommand);
-            dataTable.Clear();
-            sqlDataAdapter.Fill(dataTable);
-            return dataTable.DefaultView;
+            DataViewToFillDataGrid dataViewToFillDataGrid = new DataViewToFillDataGrid();
+
+            try
+            {
+                SqlDataAdapter sqlDataAdapter = new SqlDataAdapter(sqlCommand);
+                dataTable.Clear();
+                sqlDataAdapter.Fill(dataTable);
+                dataViewToFillDataGrid.DataView = dataTable.DefaultView;
+                return dataViewToFillDataGrid;
+            }
+            catch(Exception ex)
+            {
+                dataViewToFillDataGrid.ExceptionMessage = ex.Message;
+                return dataViewToFillDataGrid;
+            }
+            
         }
 
-        private static DbQueryExecutionStatus ConnectAndExecuteQuery(SqlConnection con, SqlCommand sqlCommand)
+        private DbQueryExecutionStatus ConnectAndExecuteQuery(SqlConnection con, SqlCommand sqlCommand)
         {
             DbQueryExecutionStatus dBConnectionStatus = new DbQueryExecutionStatus();
 
@@ -98,12 +108,6 @@ namespace FirstPhoneBook
                 con.Open();
                 sqlCommand.ExecuteNonQuery();
                 dBConnectionStatus.QuerySucceed = true;
-                return dBConnectionStatus;
-            }
-            catch (SqlException ex)
-            {
-                dBConnectionStatus.QuerySucceed = false;
-                dBConnectionStatus.ExceptionMessage = ex.Message;
                 return dBConnectionStatus;
             }
             catch (Exception ex)

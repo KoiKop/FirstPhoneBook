@@ -9,9 +9,10 @@ namespace FirstPhoneBookTests
         [TestMethod]
         public void SavingNewContact()
         {
-            //given
+            //GIVEN
             TestsHelper testsHelper = new TestsHelper();
             testsHelper.DropPhoneBookContentTestsTable();
+            testsHelper.SetupPhoneBookContentTestsTable();
 
             NewContactData expectedContactData = new NewContactData()
             {
@@ -20,21 +21,22 @@ namespace FirstPhoneBookTests
                 Email = "sb@wp.pl",
                 Address = "Nie wiem kaj to"
             };
-
-            testsHelper.SetupPhoneBookContentTestsTable();
-
+            
             DataBaseActions dataBaseActions = new DataBaseActions(PhoneBookTestsConfiguraton.ConnectionString);
-            //when
-
+            
+            //WHEN
             dataBaseActions.SaveNewContact(expectedContactData);
             var savedContactData = testsHelper.GetContactDataFromDB(1);
 
-            //then
-
+            //THEN
             Assert.AreEqual(savedContactData.Name, expectedContactData.Name);
             Assert.AreEqual(savedContactData.Phone, expectedContactData.Phone);
             Assert.AreEqual(savedContactData.Email, expectedContactData.Email);
             Assert.AreEqual(savedContactData.Address, expectedContactData.Address);
         }
+
+
     }
+
+
 }

@@ -9,6 +9,7 @@ namespace FirstPhoneBookTests
     {
         readonly string connectionString = ConfigurationManager.ConnectionStrings["ConStringTests"].ConnectionString;
 
+
         public void SetupPhoneBookContentTestsTable()
         {
             using (SqlConnection con = new SqlConnection(connectionString))
@@ -16,6 +17,16 @@ namespace FirstPhoneBookTests
                 SqlCommand sqlCommand = new SqlCommand("CREATE TABLE PhoneBookContent(UserId int NOT NULL IDENTITY(1,1), Name varchar(255), Phone varchar(50), Email varchar(255), Address varchar(255), PRIMARY KEY (UserId))", con);
                 con.Open();
                 sqlCommand.ExecuteNonQuery();     
+            }
+        }
+
+        public void DropPhoneBookContentTestsTable()
+        {
+            using (SqlConnection con = new SqlConnection(connectionString))
+            {
+                SqlCommand sqlCommand = new SqlCommand("DROP TABLE PhoneBookContent", con);
+                con.Open();
+                sqlCommand.ExecuteNonQuery();
             }
         }
 
@@ -46,24 +57,18 @@ namespace FirstPhoneBookTests
                 DataTable dataTable = new DataTable("PhoneBookTests");
                 sqlDataAdapter.Fill(dataTable);
 
-                ContactDataToTests contactDataToTests = new ContactDataToTests();
-                contactDataToTests.Name = dataTable.Rows[0]["Name"].ToString();
-                contactDataToTests.Phone = dataTable.Rows[0]["Phone"].ToString();
-                contactDataToTests.Email = dataTable.Rows[0]["Email"].ToString();
-                contactDataToTests.Address = dataTable.Rows[0]["Address"].ToString();
+                ContactDataToTests contactDataToTests = new ContactDataToTests
+                {
+                    Name = dataTable.Rows[0]["Name"].ToString(),
+                    Phone = dataTable.Rows[0]["Phone"].ToString(),
+                    Email = dataTable.Rows[0]["Email"].ToString(),
+                    Address = dataTable.Rows[0]["Address"].ToString()
+                };
 
                 return contactDataToTests;
             }
         }
 
-        public void DropPhoneBookContentTestsTable()
-        {
-            using (SqlConnection con = new SqlConnection(connectionString))
-            {
-                SqlCommand sqlCommand = new SqlCommand("DROP TABLE PhoneBookContent", con);
-                con.Open();
-                sqlCommand.ExecuteNonQuery();
-            }
-        }
+        
     }
 }

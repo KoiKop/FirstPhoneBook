@@ -19,7 +19,7 @@ namespace FirstPhoneBook
         {
             using (SqlConnection con = new SqlConnection(connectionString))
             {
-                SqlCommand sqlCommand = new SqlCommand(@"SELECT * FROM PhoneBookContent WHERE Name LIKE @Search OR Phone LIKE @Search OR Email LIKE @Search or Address LIKE @Search", con);
+                SqlCommand sqlCommand = new SqlCommand(@"SELECT * FROM PhoneBookContent WHERE Name LIKE @Search OR Phone LIKE @Search OR Email LIKE @Search or Address LIKE @Search ORDER BY Name", con);
 
                 sqlCommand.Parameters.AddWithValue("@Search", $"%{searchPhrase}%");
 
@@ -89,14 +89,15 @@ namespace FirstPhoneBook
                 dataTable.Clear();
                 sqlDataAdapter.Fill(dataTable);
                 dataViewToFillDataGrid.DataView = dataTable.DefaultView;
-                return dataViewToFillDataGrid;
+                dataViewToFillDataGrid.QuerySucceed = true;
             }
             catch(Exception ex)
             {
                 dataViewToFillDataGrid.ExceptionMessage = ex.Message;
-                return dataViewToFillDataGrid;
+                dataViewToFillDataGrid.QuerySucceed = false;
             }
-            
+
+            return dataViewToFillDataGrid;
         }
 
         private DbQueryExecutionStatus ConnectAndExecuteQuery(SqlConnection con, SqlCommand sqlCommand)
@@ -108,14 +109,14 @@ namespace FirstPhoneBook
                 con.Open();
                 sqlCommand.ExecuteNonQuery();
                 dBConnectionStatus.QuerySucceed = true;
-                return dBConnectionStatus;
             }
             catch (Exception ex)
             {
                 dBConnectionStatus.QuerySucceed = false;
                 dBConnectionStatus.ExceptionMessage = ex.Message;
-                return dBConnectionStatus;
             }
+
+            return dBConnectionStatus;
         }
     }
 }

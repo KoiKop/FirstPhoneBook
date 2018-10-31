@@ -32,5 +32,10 @@ namespace FirstPhoneBook
             else
                 return MessageBox.Show(wasQueryExecuted.ExceptionMessage, "Sorry, contact could not be deleted", MessageBoxButton.OK, MessageBoxImage.Error);
         }
+
+        public MessageBoxResult DisplayExceptionMessage(string message)
+        {
+            return MessageBox.Show(message, "Sorry, something went wrong :(", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
     }
 }

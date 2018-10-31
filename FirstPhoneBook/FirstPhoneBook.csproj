@@ -56,6 +56,8 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="ContactDataToEdition.cs" />
+    <Compile Include="DataViewToFillDataGrid.cs" />
+    <Compile Include="DbQueryExecutionStatus.cs" />
     <Compile Include="MessageBoxController.cs" />
     <Compile Include="NewContactData.cs" />
     <Page Include="MainWindow.xaml">

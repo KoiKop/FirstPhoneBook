@@ -92,7 +92,12 @@ namespace FirstPhoneBook
 
         private void SearchButton_Click(object sender, RoutedEventArgs e)
         {
-            Contacts_DataGrid.ItemsSource = dataBaseActions.SearchThruDataBase(Search_TextBox.Text);
+            var searchThruDB = dataBaseActions.SearchThruDataBase(Search_TextBox.Text);
+
+            if (searchThruDB.QuerySucceed)
+                Contacts_DataGrid.ItemsSource = searchThruDB.DataView;
+            else
+                messageBoxController.DisplayExceptionMessage(searchThruDB.ExceptionMessage);
         }
 
         private void Contacts_DataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -169,7 +174,10 @@ namespace FirstPhoneBook
 
             contactIsEdited = false;
 
-            Contacts_DataGrid.ItemsSource = dataBaseActions.FillDataGrid();
+            if (dataBaseActions.FillDataGrid().QuerySucceed)
+                Contacts_DataGrid.ItemsSource = dataBaseActions.FillDataGrid().DataView;
+            else
+                messageBoxController.DisplayExceptionMessage(dataBaseActions.FillDataGrid().ExceptionMessage);
         }
 
         private void EraseDataFromTexboxes()

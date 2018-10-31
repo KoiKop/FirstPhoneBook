@@ -1,4 +1,5 @@
-﻿using System.Data;
+﻿using System;
+using System.Data;
 using System.Data.SqlClient;
 namespace FirstPhoneBook
 {
@@ -14,11 +15,11 @@ namespace FirstPhoneBook
             this.connectionString = connectionString;
         }
 
-        public DataView SearchThruDataBase(string searchPhrase)
+        public DataViewToFillDataGrid SearchThruDataBase(string searchPhrase)
         {
             using (SqlConnection con = new SqlConnection(connectionString))
             {
-                SqlCommand sqlCommand = new SqlCommand(@"SELECT * FROM PhoneBookContent WHERE Name LIKE @Search OR Phone LIKE @Search OR Email LIKE @Search or Address LIKE @Search", con);
+                SqlCommand sqlCommand = new SqlCommand(@"SELECT * FROM PhoneBookContent WHERE Name LIKE @Search OR Phone LIKE @Search OR Email LIKE @Search or Address LIKE @Search ORDER BY Name", con);
 
                 sqlCommand.Parameters.AddWithValue("@Search", $"%{searchPhrase}%");
 
@@ -26,7 +27,7 @@ namespace FirstPhoneBook
             }
         }
 
-        public bool SaveNewContact(NewContactData newContactData)
+        public DbQueryExecutionStatus SaveNewContact(NewContactData newContactData)
         {
             using (SqlConnection con = new SqlConnection(connectionString))
             {
@@ -36,16 +37,11 @@ namespace FirstPhoneBook
                 sqlCommand.Parameters.AddWithValue("@Email", newContactData.Email);
                 sqlCommand.Parameters.AddWithValue("@Address", newContactData.Address);
 
-                con.Open();
-
-                if (sqlCommand.ExecuteNonQuery() == 1)
-                    return true;
-                else
-                    return false;
+                return ConnectAndExecuteQuery(con, sqlCommand);
             }
         }
 
-        public bool SaveEditedContact(ContactDataToEdition contactDataToEdition)
+        public DbQueryExecutionStatus SaveEditedContact(ContactDataToEdition contactDataToEdition)
         {
             using (SqlConnection con = new SqlConnection(connectionString))
             {
@@ -57,16 +53,11 @@ namespace FirstPhoneBook
                 sqlCommand.Parameters.AddWithValue("@Address", contactDataToEdition.Address);
                 sqlCommand.Parameters.AddWithValue("@Id", contactDataToEdition.Id);
 
-                con.Open();
-
-                if (sqlCommand.ExecuteNonQuery() == 1)
-                    return true;
-                else
-                    return false;
+                return ConnectAndExecuteQuery(con, sqlCommand);
             }
         }
 
-        public bool DeleteContact(int selectedContactId)
+        public DbQueryExecutionStatus DeleteContact(int selectedContactId)
         {
             using (SqlConnection con = new SqlConnection(connectionString))
             {
@@ -74,16 +65,11 @@ namespace FirstPhoneBook
                 
                 sqlCommand.Parameters.AddWithValue("@Id", selectedContactId);
 
-                con.Open();
-
-                if (sqlCommand.ExecuteNonQuery() == 1)
-                    return true;
-                else
-                    return false;
+                return ConnectAndExecuteQuery(con, sqlCommand);
             }
         }
 
-        public DataView FillDataGrid()
+        public DataViewToFillDataGrid FillDataGrid()
         {
             using (SqlConnection con = new SqlConnection(connectionString))
             {
@@ -93,12 +79,44 @@ namespace FirstPhoneBook
             }
         }
 
-        private DataView FillDataViewWithProvidedData(SqlCommand sqlCommand)
+        private DataViewToFillDataGrid FillDataViewWithProvidedData(SqlCommand sqlCommand)
         {
-            SqlDataAdapter sqlDataAdapter = new SqlDataAdapter(sqlCommand);
-            dataTable.Clear();
-            sqlDataAdapter.Fill(dataTable);
-            return dataTable.DefaultView;
+            DataViewToFillDataGrid dataViewToFillDataGrid = new DataViewToFillDataGrid();
+
+            try
+            {
+                SqlDataAdapter sqlDataAdapter = new SqlDataAdapter(sqlCommand);
+                dataTable.Clear();
+                sqlDataAdapter.Fill(dataTable);
+                dataViewToFillDataGrid.DataView = dataTable.DefaultView;
+                dataViewToFillDataGrid.QuerySucceed = true;
+            }
+            catch(Exception ex)
+            {
+                dataViewToFillDataGrid.ExceptionMessage = ex.Message;
+                dataViewToFillDataGrid.QuerySucceed = false;
+            }
+
+            return dataViewToFillDataGrid;
+        }
+
+        private DbQueryExecutionStatus ConnectAndExecuteQuery(SqlConnection con, SqlCommand sqlCommand)
+        {
+            DbQueryExecutionStatus dBConnectionStatus = new DbQueryExecutionStatus();
+
+            try
+            {
+                con.Open();
+                sqlCommand.ExecuteNonQuery();
+                dBConnectionStatus.QuerySucceed = true;
+            }
+            catch (Exception ex)
+            {
+                dBConnectionStatus.QuerySucceed = false;
+                dBConnectionStatus.ExceptionMessage = ex.Message;
+            }
+
+            return dBConnectionStatus;
         }
     }
 }

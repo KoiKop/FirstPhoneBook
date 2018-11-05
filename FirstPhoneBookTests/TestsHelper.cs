@@ -69,6 +69,16 @@ namespace FirstPhoneBookTests
             }
         }
 
-        
+        public int NumberOfRowsInDb()
+        {
+            using (SqlConnection con = new SqlConnection(connectionString))
+            {
+                SqlCommand sqlCommand = new SqlCommand("SELECT COUNT(*) FROM PhoneBookContent", con);
+
+                con.Open();
+                int rowsInDb =  int.Parse(sqlCommand.ExecuteScalar().ToString());
+                return rowsInDb;
+            }
+        }
     }
 }

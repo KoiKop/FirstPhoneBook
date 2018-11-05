@@ -106,6 +106,27 @@ namespace FirstPhoneBookTests
             Assert.AreEqual(searchResult.DataView.ToTable().Rows[0]["Name"].ToString(), contactData.Name);
         }
 
+        [TestMethod]
+        public void FillDataGridTest()
+        { 
+            //GIVEN
+            TestsHelper testsHelper = SetupNewDB();
+            var contactData = SetupContactData();
+
+            testsHelper.AddContactToDB(contactData);
+
+            DataBaseActions dataBaseActions = new DataBaseActions(PhoneBookTestsConfiguraton.ConnectionString);
+
+            //WHEN
+            var filledDataGrid = dataBaseActions.FillDataGrid();
+
+            //THEN
+            Assert.AreEqual(filledDataGrid.DataView.ToTable().Rows[0]["Name"].ToString(), contactData.Name);
+            Assert.AreEqual(filledDataGrid.DataView.ToTable().Rows[0]["Phone"].ToString(), contactData.Phone);
+            Assert.AreEqual(filledDataGrid.DataView.ToTable().Rows[0]["Email"].ToString(), contactData.Email);
+            Assert.AreEqual(filledDataGrid.DataView.ToTable().Rows[0]["Address"].ToString(), contactData.Address);
+        }
+
 
         private TestsHelper SetupNewDB()
         {

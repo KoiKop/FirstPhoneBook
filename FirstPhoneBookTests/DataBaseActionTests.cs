@@ -6,8 +6,6 @@ namespace FirstPhoneBookTests
     [TestClass]
     public class DataBaseActionTests
     {
-        private ContactDataToTests contactDataToTests;
-
         [TestMethod]
         public void SaveNewContact_NewContactWasSaved()
         {
@@ -126,6 +124,7 @@ namespace FirstPhoneBookTests
             Assert.AreEqual(filledDataGrid.DataView.ToTable().Rows[0]["Email"].ToString(), contactData.Email);
             Assert.AreEqual(filledDataGrid.DataView.ToTable().Rows[0]["Address"].ToString(), contactData.Address);
         }
+
 
 
         private TestsHelper SetupNewDB()

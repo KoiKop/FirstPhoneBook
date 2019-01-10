@@ -92,7 +92,10 @@ namespace FirstPhoneBook
 
         private void SearchButton_Click(object sender, RoutedEventArgs e)
         {
-            var searchThruDB = dataBaseActions.SearchThruDataBase(Search_TextBox.Text);
+            //var searchThruDB = dataBaseActions.SearchThruDataBase(Search_TextBox.Text);
+
+            DataBaseActionsEF dataBaseActionsEF = new DataBaseActionsEF();
+            var searchThruDB = dataBaseActionsEF.SearchThruDataBase(Search_TextBox.Text);
 
             if (searchThruDB.QuerySucceed)
                 Contacts_DataGrid.ItemsSource = searchThruDB.DataView;

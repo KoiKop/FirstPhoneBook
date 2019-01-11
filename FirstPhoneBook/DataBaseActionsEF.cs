@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Data;
 using System.Linq;
 
@@ -21,16 +22,14 @@ namespace FirstPhoneBook
             {
                 DataViewToFillDataGrid dataViewToFillDataGrid = new DataViewToFillDataGrid();
 
-                var result = db.PhoneBookContent
-                    .Where(b => b.Name.Contains(searchPhrase) || b.Phone.Contains(searchPhrase) || b.Address.Contains(searchPhrase) || b.Email.Contains(searchPhrase) )
-                    .ToList();
-
-                var dataTable = ConvertListToDataTable(result);
-
-
-
                 try
                 {
+                    var result = db.PhoneBookContent
+                        .Where(b => b.Name.Contains(searchPhrase) || b.Phone.Contains(searchPhrase) || b.Address.Contains(searchPhrase) || b.Email.Contains(searchPhrase))
+                        .ToList();
+
+                    var dataTable = ConvertListToDataTable(result);
+
                     dataViewToFillDataGrid.DataView = dataTable.DefaultView;
                     dataViewToFillDataGrid.QuerySucceed = true;
                 }
@@ -40,25 +39,27 @@ namespace FirstPhoneBook
                     dataViewToFillDataGrid.QuerySucceed = false;
                 }
 
-
                 return dataViewToFillDataGrid;
             }
         }
 
         private DataTable ConvertListToDataTable(List<PhoneBookContent> list)
         {
-            int columns = 5;
+            PropertyDescriptorCollection properties = TypeDescriptor.GetProperties(typeof(PhoneBookContent));
 
-            for (int i = 0; i < columns; i++)
+            foreach (PropertyDescriptor property in properties)
             {
-                dataTable.Columns.Add();
+                dataTable.Columns.Add(property.Name, property.PropertyType);
             }
 
             foreach (var item in list)
             {
-                dataTable.Rows.Add(item);
-            }
+                DataRow row = dataTable.NewRow();
+                foreach (PropertyDescriptor property in properties)
+                    row[property.Name] = property.GetValue(item);
 
+                dataTable.Rows.Add(row);
+            }
             return dataTable;
         }
 

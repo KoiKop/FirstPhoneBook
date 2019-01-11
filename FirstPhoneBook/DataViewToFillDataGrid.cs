@@ -1,4 +1,5 @@
-﻿using System.Data;
+﻿using System.Collections.Generic;
+using System.Data;
 
 namespace FirstPhoneBook
 {
@@ -7,5 +8,6 @@ namespace FirstPhoneBook
         public bool QuerySucceed { get; set; }
         public DataView DataView { get; set; }
         public string ExceptionMessage { get; set; }
+        public List<PhoneBookContent> List { get; set; }
     }
 }

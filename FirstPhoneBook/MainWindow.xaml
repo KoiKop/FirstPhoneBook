@@ -6,22 +6,78 @@
         xmlns:local="clr-namespace:FirstPhoneBook"
         mc:Ignorable="d"
         Title="MainWindow" Height="600" Width="800">
+    
+    
+    <Window.Resources>
+        <SolidColorBrush x:Key="TextBox.Static.Border" Color="#FFABAdB3"/>
+        <SolidColorBrush x:Key="TextBox.MouseOver.Border" Color="#FF7EB4EA"/>
+        <SolidColorBrush x:Key="TextBox.Focus.Border" Color="#FF569DE5"/>
+        <SolidColorBrush x:Key="DisabledBackgroundBrush" Color="#e5e5e5" />
+        <Style x:Key="TextBoxStyle1" TargetType="{x:Type TextBox}">
+            <Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.WindowBrushKey}}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource TextBox.Static.Border}"/>
+            <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="KeyboardNavigation.TabNavigation" Value="None"/>
+            <Setter Property="HorizontalContentAlignment" Value="Left"/>
+            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+            <Setter Property="AllowDrop" Value="true"/>
+            <Setter Property="ScrollViewer.PanningMode" Value="VerticalFirst"/>
+            <Setter Property="Stylus.IsFlicksEnabled" Value="False"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type TextBox}">
+                        <Border x:Name="border" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" SnapsToDevicePixels="True">
+                            <ScrollViewer x:Name="PART_ContentHost" Focusable="false" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsReadOnly" Value="true">
+                                <Setter Property="Background" Value="{StaticResource DisabledBackgroundBrush}"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="false">
+                                <Setter Property="Opacity" TargetName="border" Value="0.56"/>
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="true">
+                                <Setter Property="BorderBrush" TargetName="border" Value="{StaticResource TextBox.MouseOver.Border}"/>
+                            </Trigger>
+                            <Trigger Property="IsKeyboardFocused" Value="true">
+                                <Setter Property="BorderBrush" TargetName="border" Value="{StaticResource TextBox.Focus.Border}"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <MultiTrigger>
+                    <MultiTrigger.Conditions>
+                        <Condition Property="IsInactiveSelectionHighlightEnabled" Value="true"/>
+                        <Condition Property="IsSelectionActive" Value="false"/>
+                    </MultiTrigger.Conditions>
+                    <Setter Property="SelectionBrush" Value="{DynamicResource {x:Static SystemColors.InactiveSelectionHighlightBrushKey}}"/>
+                </MultiTrigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
+
+
+
+
     <Grid>
         <Label x:Name="MainLogo" Content="Phone Book" HorizontalAlignment="Left" Margin="319,20,0,0" VerticalAlignment="Top" Height="35" Width="133" FontSize="20" RenderTransformOrigin="0.744,0"/>
         <Label x:Name="NameLabel" Content="Name:" HorizontalAlignment="Left" Margin="44,65,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.474,-0.692"/>
         <Label x:Name="PhoneNoLabel" Content="Phone No:" HorizontalAlignment="Left" Margin="44,96,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.474,-0.692"/>
         <Label x:Name="EmailLabel" Content="Email:" HorizontalAlignment="Left" Margin="44,127,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.474,-0.692"/>
         <Label x:Name="Address_Label" Content="Address:" HorizontalAlignment="Left" Margin="44,158,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.474,-0.692"/>
-        <TextBox x:Name="Name_TextBox" HorizontalAlignment="Left" Height="26" Margin="121,65,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="360"/>
-        <TextBox x:Name="PhoneNo_TextBox" HorizontalAlignment="Left" Height="26" Margin="121,96,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="360"/>
-        <TextBox x:Name="EMail_TextBox" HorizontalAlignment="Left" Height="26" Margin="121,127,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="360"/>
-        <TextBox x:Name="Address_TextBox" HorizontalAlignment="Left" Height="58" Margin="121,158,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="360"/>
+        <TextBox x:Name="Name_TextBox" HorizontalAlignment="Left" Height="26" Margin="121,65,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="360" Style="{DynamicResource TextBoxStyle1}"/>
+        <TextBox x:Name="PhoneNo_TextBox" HorizontalAlignment="Left" Height="26" Margin="121,96,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="360" Style="{DynamicResource TextBoxStyle1}"/>
+        <TextBox x:Name="EMail_TextBox" HorizontalAlignment="Left" Height="26" Margin="121,127,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="360" Style="{DynamicResource TextBoxStyle1}"/>
+        <TextBox x:Name="Address_TextBox" HorizontalAlignment="Left" Height="58" Margin="121,158,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="360" Style="{DynamicResource TextBoxStyle1}"/>
         <Button x:Name="New_Button" Content="New" HorizontalAlignment="Left" Margin="531,65,0,0" VerticalAlignment="Top" Width="101" Click="New_Button_Click"/>
         <Button x:Name="Edit_Button" Content="Edit" HorizontalAlignment="Left" Margin="531,96,0,0" VerticalAlignment="Top" Width="101" Click="Edit_Button_Click"/>
         <Button x:Name="Cancel_Button" Content="Cancel" HorizontalAlignment="Left" Margin="531,127,0,0" VerticalAlignment="Top" Width="101" Click="Cancel_Button_Click"/>
         <Button x:Name="Save_Button" Content="Save" HorizontalAlignment="Left" Margin="531,158,0,0" VerticalAlignment="Top" Width="101" Click="Save_Button_Click"/>
         <Label x:Name="Search_Label" Content="Search:" HorizontalAlignment="Left" Margin="44,242,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.474,-0.692"/>
-        <TextBox x:Name="Search_TextBox" HorizontalAlignment="Left" Height="26" Margin="121,242,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="360"/>
+        <TextBox x:Name="Search_TextBox" HorizontalAlignment="Left" Height="26" Margin="121,242,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="360" Style="{DynamicResource TextBoxStyle1}"/>
         <DataGrid x:Name="Contacts_DataGrid" HorizontalAlignment="Left" Height="215" Margin="44,316,0,0" VerticalAlignment="Top" Width="696" AutoGenerateColumns="False" SelectionChanged="Contacts_DataGrid_SelectionChanged">
             <DataGrid.Columns>
                 <!--<DataGridTextColumn Binding="{Binding UserId}" Width="30" Header="ID"/>-->

@@ -8,6 +8,6 @@ namespace FirstPhoneBook
         public bool QuerySucceed { get; set; }
         public DataView DataView { get; set; }
         public string ExceptionMessage { get; set; }
-        public List<PhoneBookContent> List { get; set; }
+        public List<PhoneBookContent> ResultsList { get; set; }
     }
 }

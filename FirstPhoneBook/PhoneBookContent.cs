@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace FirstPhoneBook
+﻿namespace FirstPhoneBook
 {
-    public partial class PhoneBookContent
+    public class PhoneBookContent
     {
         public int UserId { get; set; }
         public string Name { get; set; }

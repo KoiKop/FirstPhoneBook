@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Linq;
 
@@ -8,60 +7,115 @@ namespace FirstPhoneBook
 {
     public class DataBaseActionsEF
     {
-        DataTable dataTable = new DataTable("PhoneBook");
-        public DataTable DataTable { get; set; }
-
-        public DataBaseActionsEF()
+        public DataViewToFillDataGrid FillDataGrid()
         {
-            DataTable = dataTable;
+            DataViewToFillDataGrid dataViewToFillDataGrid = new DataViewToFillDataGrid();
+
+            try
+            {
+                using (var db = new PhoneBookContentContext())
+                {
+                    dataViewToFillDataGrid.ResultsList = db.PhoneBookContent.ToList();
+                    dataViewToFillDataGrid.QuerySucceed = true;
+                }
+            }
+            catch (Exception ex)
+            {
+                dataViewToFillDataGrid.ExceptionMessage = ex.Message;
+                dataViewToFillDataGrid.QuerySucceed = false;
+            }
+
+            return dataViewToFillDataGrid;
         }
 
         public DataViewToFillDataGrid SearchThruDataBase(string searchPhrase)
         {
-            using (var db = new PhoneBookContentContext())
-            {
-                DataViewToFillDataGrid dataViewToFillDataGrid = new DataViewToFillDataGrid();
+            DataViewToFillDataGrid dataViewToFillDataGrid = new DataViewToFillDataGrid();
 
-                try
+            try
+            {
+                using (var db = new PhoneBookContentContext())
                 {
-                    var result = db.PhoneBookContent
+                    dataViewToFillDataGrid.ResultsList = db.PhoneBookContent
                         .Where(b => b.Name.Contains(searchPhrase) || b.Phone.Contains(searchPhrase) || b.Address.Contains(searchPhrase) || b.Email.Contains(searchPhrase))
                         .ToList();
 
-                    var dataTable = ConvertListToDataTable(result);
-
-                    dataViewToFillDataGrid.DataView = dataTable.DefaultView;
                     dataViewToFillDataGrid.QuerySucceed = true;
                 }
-                catch (Exception ex)
-                {
-                    dataViewToFillDataGrid.ExceptionMessage = ex.Message;
-                    dataViewToFillDataGrid.QuerySucceed = false;
-                }
-
-                return dataViewToFillDataGrid;
             }
-        }
+            catch (Exception ex)
+            {
+                dataViewToFillDataGrid.ExceptionMessage = ex.Message;
+                dataViewToFillDataGrid.QuerySucceed = false;
+            }
 
-        private DataTable ConvertListToDataTable(List<PhoneBookContent> list)
+            return dataViewToFillDataGrid;
+        }
+        
+        public DbQueryExecutionStatus SaveNewContact(PhoneBookContent newContactData)
         {
-            PropertyDescriptorCollection properties = TypeDescriptor.GetProperties(typeof(PhoneBookContent));
-
-            foreach (PropertyDescriptor property in properties)
+            DbQueryExecutionStatus dBExecutionStatus = new DbQueryExecutionStatus();
+            
+            try
             {
-                dataTable.Columns.Add(property.Name, property.PropertyType);
+                using (var db = new PhoneBookContentContext())
+                {
+                    var query = db.PhoneBookContent.Add(newContactData);
+                    db.SaveChanges();
+                    dBExecutionStatus.QuerySucceed = true;
+                }
+            }
+            catch (Exception ex)
+            {
+                dBExecutionStatus.QuerySucceed = false;
+                dBExecutionStatus.ExceptionMessage = ex.Message;
             }
 
-            foreach (var item in list)
-            {
-                DataRow row = dataTable.NewRow();
-                foreach (PropertyDescriptor property in properties)
-                    row[property.Name] = property.GetValue(item);
-
-                dataTable.Rows.Add(row);
-            }
-            return dataTable;
+            return dBExecutionStatus;
         }
 
+        public DbQueryExecutionStatus SaveEditedContact(PhoneBookContent contactDataToEdition)
+        {
+            DbQueryExecutionStatus dBExecutionStatus = new DbQueryExecutionStatus();
+
+            try
+            {
+                using (var db = new PhoneBookContentContext())
+                {
+                    var query = db.PhoneBookContent.Update(contactDataToEdition);
+                    db.SaveChanges();
+                    dBExecutionStatus.QuerySucceed = true;
+                }
+            }
+            catch (Exception ex)
+            {
+                dBExecutionStatus.QuerySucceed = false;
+                dBExecutionStatus.ExceptionMessage = ex.Message;
+            }
+
+            return dBExecutionStatus;
+        }
+
+        public DbQueryExecutionStatus DeleteContact(PhoneBookContent contactToDelete)
+        {
+            DbQueryExecutionStatus dBExecutionStatus = new DbQueryExecutionStatus();
+
+            try
+            {
+                using (var db = new PhoneBookContentContext())
+                {
+                    var query = db.PhoneBookContent.Remove(contactToDelete);
+                    db.SaveChanges();
+                    dBExecutionStatus.QuerySucceed = true;
+                }
+            }
+            catch (Exception ex)
+            {
+                dBExecutionStatus.QuerySucceed = false;
+                dBExecutionStatus.ExceptionMessage = ex.Message;
+            }
+
+            return dBExecutionStatus;
+        }
     }
 }

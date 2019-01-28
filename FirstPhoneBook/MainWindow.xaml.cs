@@ -1,6 +1,7 @@
-﻿using System;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
+using System.Linq;
+using System.Collections.Generic;
 
 namespace FirstPhoneBook
 {
@@ -15,10 +16,13 @@ namespace FirstPhoneBook
             SetInitialState();
         }
 
-        DataBaseActions dataBaseActions = new DataBaseActions(PhoneBookConfiguration.ConnectionString);
+        DataBaseActionsEF dataBaseActionsEF = new DataBaseActionsEF();
+
         MessageBoxController messageBoxController = new MessageBoxController();
         PhoneBookConfiguration phoneBookConfiguration = new PhoneBookConfiguration();
-        
+
+        int selectedIndex;
+
         bool contactIsEdited = false;
 
         private void New_Button_Click(object sender, RoutedEventArgs e)
@@ -30,7 +34,7 @@ namespace FirstPhoneBook
             Save_Button.IsEnabled = true;
             Delete_Button.IsEnabled = false;
             SearchButton.IsEnabled = false;
-           
+
             Name_TextBox.IsReadOnly = false;
             PhoneNo_TextBox.IsReadOnly = false;
             EMail_TextBox.IsReadOnly = false;
@@ -65,13 +69,13 @@ namespace FirstPhoneBook
             if (contactIsEdited == false)
             {
                 var newContactData = GetNewContactDataFromTextBoxes();
-                var wasQueryExecuted = dataBaseActions.SaveNewContact(newContactData);
+                var wasQueryExecuted = dataBaseActionsEF.SaveNewContact(newContactData);
                 messageBoxController.SaveContactStatus(wasQueryExecuted);
             }
             else
             {
-                var contactDataToEdition = GetContactDataToEdition();
-                var wasQueryExecuted = dataBaseActions.SaveEditedContact(contactDataToEdition);
+                var contactData = GetContactData();
+                var wasQueryExecuted = dataBaseActionsEF.SaveEditedContact(contactData);
                 messageBoxController.SaveContactStatus(wasQueryExecuted);
             }
 
@@ -82,73 +86,65 @@ namespace FirstPhoneBook
         {
             if (messageBoxController.ConfirmDeletingContact() == MessageBoxResult.Yes)
             {
-                var selectedContactId = GetSelectedContactId();
-                var deleteContect = dataBaseActions.DeleteContact(selectedContactId);
+                var contactData = GetContactData();
+                var deleteContect = dataBaseActionsEF.DeleteContact(contactData);
                 messageBoxController.DisplayDeleteContactStatus(deleteContect);
             }
-            
+
             SetInitialState();
         }
 
         private void SearchButton_Click(object sender, RoutedEventArgs e)
         {
-            //var searchThruDB = dataBaseActions.SearchThruDataBase(Search_TextBox.Text);
-
-            DataBaseActionsEF dataBaseActionsEF = new DataBaseActionsEF();
             var searchThruDB = dataBaseActionsEF.SearchThruDataBase(Search_TextBox.Text);
 
             if (searchThruDB.QuerySucceed)
-                Contacts_DataGrid.ItemsSource = searchThruDB.DataView;
+                Contacts_DataGrid.ItemsSource = searchThruDB.ResultsList;
             else
                 messageBoxController.DisplayExceptionMessage(searchThruDB.ExceptionMessage);
         }
 
         private void Contacts_DataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            List<PhoneBookContent> SelectedItemsList = Contacts_DataGrid.ItemsSource.OfType<PhoneBookContent>().ToList();
+
+            selectedIndex = Contacts_DataGrid.SelectedIndex;
 
             if (Contacts_DataGrid.SelectedIndex != -1)
             {
-                int selectedIndex = Contacts_DataGrid.SelectedIndex;
-                if (Contacts_DataGrid.SelectedIndex < dataBaseActions.DataTable.Rows.Count)
+                if (Contacts_DataGrid.SelectedIndex < SelectedItemsList.Count)
                 {
-                    Name_TextBox.Text     = dataBaseActions.DataTable.Rows[selectedIndex][1].ToString();
-                    PhoneNo_TextBox.Text  = dataBaseActions.DataTable.Rows[selectedIndex][2].ToString();
-                    EMail_TextBox.Text    = dataBaseActions.DataTable.Rows[selectedIndex][3].ToString();
-                    Address_TextBox.Text  = dataBaseActions.DataTable.Rows[selectedIndex][4].ToString();
+                    Name_TextBox.Text =     SelectedItemsList[selectedIndex].Name;
+                    PhoneNo_TextBox.Text =  SelectedItemsList[selectedIndex].Phone;
+                    EMail_TextBox.Text =    SelectedItemsList[selectedIndex].Email;
+                    Address_TextBox.Text =  SelectedItemsList[selectedIndex].Address;
+
                     Edit_Button.IsEnabled = true;
                     Save_Button.IsEnabled = false;
                     Delete_Button.IsEnabled = true;
-                    //Contacts_DataGrid.SelectedIndex = -1;
                 }
             }
         }
 
-        private ContactDataToEdition GetContactDataToEdition()
+        private PhoneBookContent GetContactData()
         {
-            int selectedIndex = Contacts_DataGrid.SelectedIndex;
-
-            ContactDataToEdition contactDataToEdition = new ContactDataToEdition
+            List<PhoneBookContent> SelectedItemsList = Contacts_DataGrid.ItemsSource.OfType<PhoneBookContent>().ToList();
+            
+            PhoneBookContent contactData = new PhoneBookContent
             {
-                Id = Int32.Parse(dataBaseActions.DataTable.Rows[selectedIndex][0].ToString()),
+                UserId = SelectedItemsList[selectedIndex].UserId,
                 Name = Name_TextBox.Text,
                 Phone = PhoneNo_TextBox.Text,
                 Email = EMail_TextBox.Text,
                 Address = Address_TextBox.Text
             };
 
-            return contactDataToEdition;
+            return contactData;
         }
 
-        private int GetSelectedContactId()
+        private PhoneBookContent GetNewContactDataFromTextBoxes()
         {
-            int selectedIndex = Contacts_DataGrid.SelectedIndex;
-
-            return Int32.Parse(dataBaseActions.DataTable.Rows[selectedIndex][0].ToString());
-        }
-
-        private NewContactData GetNewContactDataFromTextBoxes()
-        {
-            NewContactData newContactData = new NewContactData
+            PhoneBookContent newContactData = new PhoneBookContent
             {
                 Name = Name_TextBox.Text,
                 Phone = PhoneNo_TextBox.Text,
@@ -177,15 +173,19 @@ namespace FirstPhoneBook
 
             contactIsEdited = false;
 
-            if (dataBaseActions.FillDataGrid().QuerySucceed)
-                Contacts_DataGrid.ItemsSource = dataBaseActions.FillDataGrid().DataView;
+            selectedIndex = -1;
+
+            var fillDataGridQuery = dataBaseActionsEF.FillDataGrid();
+
+            if (fillDataGridQuery.QuerySucceed)
+                Contacts_DataGrid.ItemsSource = fillDataGridQuery.ResultsList;
             else
-                messageBoxController.DisplayExceptionMessage(dataBaseActions.FillDataGrid().ExceptionMessage);
+                messageBoxController.DisplayExceptionMessage(dataBaseActionsEF.FillDataGrid().ExceptionMessage);
         }
 
         private void EraseDataFromTexboxes()
         {
             Name_TextBox.Text = PhoneNo_TextBox.Text = EMail_TextBox.Text = Address_TextBox.Text = Search_TextBox.Text = string.Empty;
-        }       
+        }
     }
 }

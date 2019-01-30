@@ -6,8 +6,11 @@ namespace FirstPhoneBook
 {
     public partial class PhoneBookContentContext : DbContext
     {
-        public PhoneBookContentContext()
+        private string connectionString;
+
+        public PhoneBookContentContext(string connectionString)
         {
+            this.connectionString = connectionString;
         }
 
         public PhoneBookContentContext(DbContextOptions<PhoneBookContentContext> options)
@@ -22,7 +25,7 @@ namespace FirstPhoneBook
             if (!optionsBuilder.IsConfigured)
             {
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
-                optionsBuilder.UseSqlServer("Server=ponikiewskipc\\sqlexpress;Database=PhoneBookContent;Trusted_Connection=True;");
+                optionsBuilder.UseSqlServer(connectionString); //connection string  "Server=ponikiewskipc\\sqlexpress;Database=PhoneBookContent;Trusted_Connection=True;")
             }
         }
 

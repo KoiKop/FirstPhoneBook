@@ -16,10 +16,8 @@ namespace FirstPhoneBook
             SetInitialState();
         }
 
-        DataBaseActionsEF dataBaseActionsEF = new DataBaseActionsEF();
-
+        DataBaseActionsEF dataBaseActionsEF = new DataBaseActionsEF(PhoneBookConfiguration.ConnectionString);
         MessageBoxController messageBoxController = new MessageBoxController();
-        PhoneBookConfiguration phoneBookConfiguration = new PhoneBookConfiguration();
 
         int selectedIndex;
 
@@ -173,7 +171,7 @@ namespace FirstPhoneBook
 
             contactIsEdited = false;
 
-            selectedIndex = -1;
+            selectedIndex = 0;
 
             var fillDataGridQuery = dataBaseActionsEF.FillDataGrid();
 

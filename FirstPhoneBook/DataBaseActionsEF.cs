@@ -7,13 +7,20 @@ namespace FirstPhoneBook
 {
     public class DataBaseActionsEF
     {
+        private string connectionString;
+
+        public DataBaseActionsEF(string connectionString)
+        {
+            this.connectionString = connectionString;
+        }
+
         public DataViewToFillDataGrid FillDataGrid()
         {
             DataViewToFillDataGrid dataViewToFillDataGrid = new DataViewToFillDataGrid();
 
             try
             {
-                using (var db = new PhoneBookContentContext())
+                using (var db = new PhoneBookContentContext(connectionString))
                 {
                     dataViewToFillDataGrid.ResultsList = db.PhoneBookContent.ToList();
                     dataViewToFillDataGrid.QuerySucceed = true;
@@ -34,7 +41,7 @@ namespace FirstPhoneBook
 
             try
             {
-                using (var db = new PhoneBookContentContext())
+                using (var db = new PhoneBookContentContext(connectionString))
                 {
                     dataViewToFillDataGrid.ResultsList = db.PhoneBookContent
                         .Where(b => b.Name.Contains(searchPhrase) || b.Phone.Contains(searchPhrase) || b.Address.Contains(searchPhrase) || b.Email.Contains(searchPhrase))
@@ -58,7 +65,7 @@ namespace FirstPhoneBook
             
             try
             {
-                using (var db = new PhoneBookContentContext())
+                using (var db = new PhoneBookContentContext(connectionString))
                 {
                     var query = db.PhoneBookContent.Add(newContactData);
                     db.SaveChanges();
@@ -80,7 +87,7 @@ namespace FirstPhoneBook
 
             try
             {
-                using (var db = new PhoneBookContentContext())
+                using (var db = new PhoneBookContentContext(connectionString))
                 {
                     var query = db.PhoneBookContent.Update(contactDataToEdition);
                     db.SaveChanges();
@@ -102,7 +109,7 @@ namespace FirstPhoneBook
 
             try
             {
-                using (var db = new PhoneBookContentContext())
+                using (var db = new PhoneBookContentContext(connectionString))
                 {
                     var query = db.PhoneBookContent.Remove(contactToDelete);
                     db.SaveChanges();

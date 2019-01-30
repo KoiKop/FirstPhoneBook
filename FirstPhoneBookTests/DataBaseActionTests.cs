@@ -12,16 +12,17 @@ namespace FirstPhoneBookTests
             //GIVEN
             TestsHelper testsHelper = SetupNewDB();
 
-            NewContactData expectedContactData = new NewContactData()
+            PhoneBookContent expectedContactData = new PhoneBookContent()
             {
                 Name = "Stefan Burczymucha",
                 Phone = "6880943",
                 Email = "sb@wp.pl",
-                Address = "Nie wiem kaj to"
+                Address = "Nie wiem kaj to",
+                UserId = 1
             };
 
             //WHEN
-            DataBaseActions dataBaseActions = new DataBaseActions(PhoneBookTestsConfiguraton.ConnectionString);
+            DataBaseActionsEF dataBaseActions = new DataBaseActionsEF(PhoneBookTestsConfiguraton.ConnectionString);
 
             dataBaseActions.SaveNewContact(expectedContactData);
             var savedContactData = testsHelper.GetContactDataFromDB(1);
@@ -39,15 +40,23 @@ namespace FirstPhoneBookTests
         {
             //GIVEN
             TestsHelper testsHelper = SetupNewDB();
-
             var contactDataToTests = SetupContactData();
-
             testsHelper.AddContactToDB(contactDataToTests);
 
-            //WHEN
-            DataBaseActions dataBaseActions = new DataBaseActions(PhoneBookTestsConfiguraton.ConnectionString);
+            PhoneBookContent contactDataToDelete = new PhoneBookContent
+            {
+                Name = "Stefan Burczymucha",
+                Phone = "6880943",
+                Email = "sb@wp.pl",
+                Address = "Nie wiem kaj to",
+                UserId = 1
+            };
 
-            dataBaseActions.DeleteContact(1);
+
+            //WHEN
+            DataBaseActionsEF dataBaseActions = new DataBaseActionsEF(PhoneBookTestsConfiguraton.ConnectionString);
+
+            dataBaseActions.DeleteContact(contactDataToDelete);
 
             //THEN
             Assert.AreEqual(testsHelper.NumberOfRowsInDb(), 0);
@@ -63,17 +72,17 @@ namespace FirstPhoneBookTests
 
             testsHelper.AddContactToDB(contactDataToTestsBeforeEdition);
 
-            ContactDataToEdition expectedContactData = new ContactDataToEdition
+            PhoneBookContent expectedContactData = new PhoneBookContent
             {
                 Name = "TEST Stefan Burczymucha",
                 Phone = "55555 6880943",
                 Email = "TESTsb@wp.pl",
                 Address = "TEST Nie wiem kaj to",
-                Id = 1
+                UserId = 1
             };
        
             //WHEN
-            DataBaseActions dataBaseActions = new DataBaseActions(PhoneBookTestsConfiguraton.ConnectionString);
+            DataBaseActionsEF dataBaseActions = new DataBaseActionsEF(PhoneBookTestsConfiguraton.ConnectionString);
 
             dataBaseActions.SaveEditedContact(expectedContactData);
 
@@ -95,7 +104,7 @@ namespace FirstPhoneBookTests
 
             testsHelper.AddContactToDB(contactData);
 
-            DataBaseActions dataBaseActions = new DataBaseActions(PhoneBookTestsConfiguraton.ConnectionString);
+            DataBaseActionsEF dataBaseActions = new DataBaseActionsEF(PhoneBookTestsConfiguraton.ConnectionString);
 
             //WHEN
             var searchResult = dataBaseActions.SearchThruDataBase(contactData.Name);
@@ -113,7 +122,7 @@ namespace FirstPhoneBookTests
 
             testsHelper.AddContactToDB(contactData);
 
-            DataBaseActions dataBaseActions = new DataBaseActions(PhoneBookTestsConfiguraton.ConnectionString);
+            DataBaseActionsEF dataBaseActions = new DataBaseActionsEF(PhoneBookTestsConfiguraton.ConnectionString);
 
             //WHEN
             var filledDataGrid = dataBaseActions.FillDataGrid();
@@ -142,7 +151,8 @@ namespace FirstPhoneBookTests
                 Name = "Stefan Burczymucha",
                 Phone = "6880943",
                 Email = "sb@wp.pl",
-                Address = "Nie wiem kaj to"
+                Address = "Nie wiem kaj to",
+                UserId = 1
             };
 
             return contactDataToTests;

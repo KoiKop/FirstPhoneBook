@@ -7,7 +7,7 @@ namespace FirstPhoneBook
 {
     public class DataBaseActionsEF
     {
-        private string connectionString;
+        private readonly string connectionString;
 
         public DataBaseActionsEF(string connectionString)
         {

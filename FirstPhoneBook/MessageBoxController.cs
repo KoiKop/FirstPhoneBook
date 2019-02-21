@@ -37,5 +37,10 @@ namespace FirstPhoneBook
         {
             return MessageBox.Show(message, "Sorry, something went wrong :(", MessageBoxButton.OK, MessageBoxImage.Error);
         }
+
+        public MessageBoxResult DisplayValidationMessage(string message)
+        {
+            return MessageBox.Show(message, "Validation error", MessageBoxButton.OK);
+        }
     }
 }

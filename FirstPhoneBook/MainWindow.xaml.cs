@@ -2,6 +2,7 @@
 using System.Windows.Controls;
 using System.Linq;
 using System.Collections.Generic;
+using ValidationResult = FluentValidation.Results.ValidationResult;
 
 namespace FirstPhoneBook
 {
@@ -67,14 +68,29 @@ namespace FirstPhoneBook
             if (contactIsEdited == false)
             {
                 var newContactData = GetNewContactDataFromTextBoxes();
-                var wasQueryExecuted = dataBaseActionsEF.SaveNewContact(newContactData);
-                messageBoxController.SaveContactStatus(wasQueryExecuted);
+                var validationResult = ValidateContactData(newContactData);
+
+                if (validationResult.IsValid)
+                {
+                    var wasQueryExecuted = dataBaseActionsEF.SaveNewContact(newContactData);
+                    messageBoxController.SaveContactStatus(wasQueryExecuted);
+                }
+                else
+                    messageBoxController.DisplayValidationMessage(validationResult.ToString());
             }
+
             else
             {
                 var contactData = GetContactData();
-                var wasQueryExecuted = dataBaseActionsEF.SaveEditedContact(contactData);
-                messageBoxController.SaveContactStatus(wasQueryExecuted);
+                var validationResult = ValidateContactData(contactData);
+
+                if (validationResult.IsValid)
+                {
+                    var wasQueryExecuted = dataBaseActionsEF.SaveEditedContact(contactData);
+                    messageBoxController.SaveContactStatus(wasQueryExecuted);
+                }
+                else
+                    messageBoxController.DisplayValidationMessage(validationResult.ToString());
             }
 
             SetInitialState();
@@ -112,10 +128,10 @@ namespace FirstPhoneBook
             {
                 if (Contacts_DataGrid.SelectedIndex < SelectedItemsList.Count)
                 {
-                    Name_TextBox.Text =     SelectedItemsList[selectedIndex].Name;
-                    PhoneNo_TextBox.Text =  SelectedItemsList[selectedIndex].Phone;
-                    EMail_TextBox.Text =    SelectedItemsList[selectedIndex].Email;
-                    Address_TextBox.Text =  SelectedItemsList[selectedIndex].Address;
+                    Name_TextBox.Text = SelectedItemsList[selectedIndex].Name;
+                    PhoneNo_TextBox.Text = SelectedItemsList[selectedIndex].Phone;
+                    EMail_TextBox.Text = SelectedItemsList[selectedIndex].Email;
+                    Address_TextBox.Text = SelectedItemsList[selectedIndex].Address;
 
                     Edit_Button.IsEnabled = true;
                     Save_Button.IsEnabled = false;
@@ -127,7 +143,7 @@ namespace FirstPhoneBook
         private PhoneBookContent GetContactData()
         {
             List<PhoneBookContent> SelectedItemsList = Contacts_DataGrid.ItemsSource.OfType<PhoneBookContent>().ToList();
-            
+
             PhoneBookContent contactData = new PhoneBookContent
             {
                 UserId = SelectedItemsList[selectedIndex].UserId,
@@ -184,6 +200,14 @@ namespace FirstPhoneBook
         private void EraseDataFromTexboxes()
         {
             Name_TextBox.Text = PhoneNo_TextBox.Text = EMail_TextBox.Text = Address_TextBox.Text = Search_TextBox.Text = string.Empty;
+        }
+
+        private ValidationResult ValidateContactData(PhoneBookContent contactData)
+        {
+            PhoneBookContentValidator validator = new PhoneBookContentValidator();
+            ValidationResult result = validator.Validate(contactData);
+
+            return result;
         }
     }
 }

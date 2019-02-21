@@ -10,15 +10,14 @@ namespace FirstPhoneBookTests
         public void SaveNewContact_NewContactWasSaved()
         {
             //GIVEN
-            TestsHelper testsHelper = SetupNewDB();
+            TestsHelper testsHelper = SetupNewTable();
 
             PhoneBookContent expectedContactData = new PhoneBookContent()
             {
                 Name = "Stefan Burczymucha",
                 Phone = "6880943",
                 Email = "sb@wp.pl",
-                Address = "Nie wiem kaj to",
-                UserId = 1
+                Address = "Nie wiem kaj to"
             };
 
             //WHEN
@@ -39,7 +38,7 @@ namespace FirstPhoneBookTests
         public void DeleteContact_ContactWasDeleted()
         {
             //GIVEN
-            TestsHelper testsHelper = SetupNewDB();
+            TestsHelper testsHelper = SetupNewTable();
             var contactDataToTests = SetupContactData();
             testsHelper.AddContactToDB(contactDataToTests);
 
@@ -66,7 +65,7 @@ namespace FirstPhoneBookTests
         public void EditExistingContact_ContactIsEdited()
         {
             //GIVEN
-            TestsHelper testsHelper = SetupNewDB();
+            TestsHelper testsHelper = SetupNewTable();
 
             var contactDataToTestsBeforeEdition = SetupContactData();
 
@@ -99,7 +98,7 @@ namespace FirstPhoneBookTests
         public void SearchThruDBTest()
         {
             //GIVEN
-            TestsHelper testsHelper = SetupNewDB();
+            TestsHelper testsHelper = SetupNewTable();
             var contactData = SetupContactData();
 
             testsHelper.AddContactToDB(contactData);
@@ -110,14 +109,14 @@ namespace FirstPhoneBookTests
             var searchResult = dataBaseActions.SearchThruDataBase(contactData.Name);
 
             //THEN
-            Assert.AreEqual(searchResult.DataView.ToTable().Rows[0]["Name"].ToString(), contactData.Name);
+            Assert.AreEqual(searchResult.ResultsList[0].Name, contactData.Name);
         }
 
         [TestMethod]
         public void FillDataGridTest()
         { 
             //GIVEN
-            TestsHelper testsHelper = SetupNewDB();
+            TestsHelper testsHelper = SetupNewTable();
             var contactData = SetupContactData();
 
             testsHelper.AddContactToDB(contactData);
@@ -128,15 +127,15 @@ namespace FirstPhoneBookTests
             var filledDataGrid = dataBaseActions.FillDataGrid();
 
             //THEN
-            Assert.AreEqual(filledDataGrid.DataView.ToTable().Rows[0]["Name"].ToString(), contactData.Name);
-            Assert.AreEqual(filledDataGrid.DataView.ToTable().Rows[0]["Phone"].ToString(), contactData.Phone);
-            Assert.AreEqual(filledDataGrid.DataView.ToTable().Rows[0]["Email"].ToString(), contactData.Email);
-            Assert.AreEqual(filledDataGrid.DataView.ToTable().Rows[0]["Address"].ToString(), contactData.Address);
+            Assert.AreEqual(filledDataGrid.ResultsList[0].Name, contactData.Name);
+            Assert.AreEqual(filledDataGrid.ResultsList[0].Email, contactData.Email);
+            Assert.AreEqual(filledDataGrid.ResultsList[0].Phone, contactData.Phone);
+            Assert.AreEqual(filledDataGrid.ResultsList[0].Address, contactData.Address);
         }
 
 
 
-        private TestsHelper SetupNewDB()
+        private TestsHelper SetupNewTable()
         {
             TestsHelper testsHelper = new TestsHelper();
             testsHelper.DropPhoneBookContentTestsTable();
